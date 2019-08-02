@@ -192,7 +192,7 @@
 							<span>${boardContent.content }</span>
 						</div><br><hr>
 						<input type="button" value="목록으로" onclick="javascript:location.href='bulletinBoard'">
-						<c:if test="${boardContent.userId.equals('${sessionScope.loginUser.userId}') }">
+						<c:if test="">
 							<input type="button" value="수정" onclick="">
 						</c:if>
 					</c:if>
