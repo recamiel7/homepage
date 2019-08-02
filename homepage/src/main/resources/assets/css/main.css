@@ -1,0 +1,132 @@
+@charset "UTF-8";
+
+/*  base  */
+body{
+	background-color: #ffffff;
+}
+
+p, h1, h2, h3, h4, h5, h6, ul{
+	list-style: none;
+	padding : 0px;
+	margin: 0px;
+}
+
+a{
+	text-decoration: none;
+}
+
+a:hover, a:active, a:focus{
+	text-decoration: underline;
+}
+
+/* layout */
+#main_body{
+	clear: both;
+	width: 1000px;
+	margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+}
+
+#header{
+	display: flex;
+	justify-content: center;
+	align-items : center;
+	height : 150px;
+	background-image: url("../img/sky.jpg");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+
+#main_container{
+	display: flex;
+	flex-direction : column;
+	align-content : center;
+	flex-wrap : wrap;
+	
+	min-height: 700px;
+}
+
+#board_container{
+	display: flex;
+	flex-direction: row;
+	
+	min-height: 700px;
+}
+
+#board_aside{
+	height: 100%;
+	width: 300px;
+	border: solid 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #ffffff;
+	
+	min-height: 600px;
+}
+
+#board_content{
+	height: 100%;
+	width: 100%;
+	border: solid 1px;
+	padding-left: 10px;
+	padding-right: 10px;
+	background-color: #ffffff;
+	
+	min-height: 600px;
+}
+
+/* header and main_menu */
+h1{
+	display: flex;
+	justify-content: center;
+	align-content : center;
+}
+
+#main_menu {
+	display: flex;
+	flex-wrap : nowrap;	
+}
+
+#main_menu >li{
+	display: flex;
+	justify-content: center;
+	align-items : center;
+	height : 100px;
+	width : 100%;
+	
+	list-style: none;
+	border-right: 1px solid #cccccc;
+	background-color: #bbbbbb;
+}
+
+/* main_nav */
+#member_button{
+	display: flex;
+	justify-content: flex-end;
+	flex-direction : row;
+	flex-wrap : nowrap;
+}
+
+#member_button >li{
+	display: flex;
+	justify-content: center;
+	align-items : center;
+	
+	margin-right: 10px;
+}
+
+/* main_container */
+#main_container> p{
+	display: flex;
+	margin-top: 20px;
+	justify-content: center;
+}
+
+#map{
+	width:500px;
+	height:400px;
+	margin : 0px;
+}
+
