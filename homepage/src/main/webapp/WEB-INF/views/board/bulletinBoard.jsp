@@ -8,7 +8,6 @@
 <title>자유 게시판</title>
 <link href="assets/css/main.css" rel="stylesheet"/> 
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" > </script>
-
 <script type="text/javascript">
 	
 	$(document).ready(function(){
@@ -47,7 +46,7 @@
 			
 			function(data,status){
 				if(status == "success"){
-					alert("게시글 읽어오기 성공");
+					console.log("게시글 읽어오기 성공");
 					$("#postContent").show();
 					$("#postList").hide();
 				} else{
@@ -56,13 +55,27 @@
 			}
 		);		
 	}
+	
+	function changeBoardList(menuName){		
+		var form = document.createElement('form');
+		var objs;
+		objs = document.createElement('input'); 
+		objs.setAttribute('type', 'text');
+		objs.setAttribute('name', 'menuName'); 
+		objs.setAttribute('value', menuName); 
+		form.appendChild(objs);
+		form.setAttribute('method', 'post'); 
+		form.setAttribute('action', "bulletinBoard"); 
+		document.body.appendChild(form);
+		form.submit();		
+	}
 
 </script>
 </head>
 <body>
 	<!-- main_body top -->
 	<div id="main_body">
-		
+				
 		<div id="button_box">
 				<ul id="member_button">		
 					<c:if test="${sessionScope.loginUser !=null }">
@@ -133,11 +146,12 @@
 			
 			<!-- 게시판 종류 -->
 			<div id="board_aside">
-				<c:forEach var="boardMenu" items="${menuList }">
-					<ul>
-						<li><a onclick="">${boardMenu.menuName }</a></li>
-					</ul>
-				</c:forEach>
+				<ul>
+					<li><a onclick="javascript:location.href='bulletinBoard'">전체글보기</a></li>
+					<c:forEach var="boardMenu" items="${menuList }">					
+						<li><a onclick="changeBoardList('${boardMenu.menuName }')">${boardMenu.menuName }</a></li>					
+					</c:forEach>
+				</ul>
 				<c:if test="${sessionScope.checkAdmin }">
 					
 					<input type="text" id="menuName">
@@ -176,6 +190,7 @@
 						<input type="button" value="글 작성하기" onclick="javascript:location.href='write?boardName=bulletinBoard'">
 					</c:if>
 				</div>
+				
 				<!-- 게시글 내용 -->
 				<div id="postContent" >
 					<c:if test="${boardContent != null }">
@@ -192,7 +207,7 @@
 							<span>${boardContent.content }</span>
 						</div><br><hr>
 						<input type="button" value="목록으로" onclick="javascript:location.href='bulletinBoard'">
-						<c:if test="${boardContent.userId.equals('${sessionScope.loginUser.userId}') }">
+						<c:if test="">
 							<input type="button" value="수정" onclick="">
 						</c:if>
 					</c:if>

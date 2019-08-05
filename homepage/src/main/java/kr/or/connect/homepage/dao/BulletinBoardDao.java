@@ -37,6 +37,12 @@ public class BulletinBoardDao {
 		return jdbc.query(BULLETIN_SELECT_ALL, Collections.emptyMap(), bulletinRowMapper);
 	}
 	
+
+	public List<Bulletin> boardMenuSelectByMenuName(String menuName) {
+		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
+		return jdbc.query(BULLETIN_SELECT_MENU_NAME, params, bulletinRowMapper);
+	}
+	
 	public void requestInsert(HttpServletRequest request){
 		Bulletin bulletin = new Bulletin();
 		String userId =  request.getParameter("userId");
