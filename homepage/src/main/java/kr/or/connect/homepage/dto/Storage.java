@@ -1,10 +1,12 @@
 package kr.or.connect.homepage.dto;
 
 import java.io.File;
+import java.util.Date;
 
 public class Storage {
 	private int no;
-	private String menu, title, content, regdate;
+	private String menu, title, content;
+	private Date regdate;
 	private File file;
 	
 	public int getNo() {
@@ -31,10 +33,10 @@ public class Storage {
 	public void setContent(String content) {
 		this.content = content;
 	}
-	public String getRegdate() {
+	public Date getRegdate() {
 		return regdate;
 	}
-	public void setRegdate(String regdate) {
+	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
 	public File getFile() {

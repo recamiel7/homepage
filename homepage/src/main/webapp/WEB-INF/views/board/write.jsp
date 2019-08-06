@@ -11,12 +11,23 @@
 <script type="text/javascript">
 	function bulletinPost(){
 
-		if($("#menuName option:selected").val() == ""){
+		if($("#menuNameB option:selected").val() == ""){
 			alert("게시판을 선택해 주세요.")
-		}else if($("#title").val() == ""){
+		}else if($("#titleB").val() == ""){
 			alert("제목을 입력하세요")
 		}else{
 			$("#bulletinPost").submit();
+		} 
+	}
+	
+	function storagePost(){
+
+		if($("#menuNameS option:selected").val() == ""){
+			alert("게시판을 선택해 주세요.")
+		}else if($("#titleS").val() == ""){
+			alert("제목을 입력하세요")
+		}else{
+			$("#storagePost").submit();
 		} 
 	}
 	
@@ -30,14 +41,14 @@
 	
 	<c:if test='<%=boardName.equals("bulletinBoard")%>'>
 		<form action="write" method="post" id="bulletinPost">
-			<input type="hidden" name="boardName" value="bulletinBoard">
+			<input type="hidden" name="boardName" value="<%=boardName %>">
 			<input type="hidden" name="userId" value="${loginUser.userId }">
 
 			<table>	
 				<tr>
 					<td>게시판 선택</td>
 					<td>
-						<select name="menuName" id="menuName">
+						<select name="menuName" id="menuNameB">
 							<option value="" >게시판을 선택해 주세요.</option>
 							<c:forEach  var="menu" items="${menuList }">
 								<option value="${menu.menuName }">${menu.menuName }</option>
@@ -47,7 +58,7 @@
 				</tr>			
 				<tr>
 					<td>제목</td>
-					<td><input type="text" id="title" name="title"></td>
+					<td><input type="text" id="titleB" name="title"></td>
 				</tr>
 				<tr>
 					<td>작성자</td>
@@ -65,9 +76,38 @@
 	</c:if>
 
 	<c:if test='<%=boardName.equals("storageBoard")%>'>
-		storage
+		<form action="write" method="post" id="storagePost">
+			<input type="hidden" name="boardName" value="<%=boardName %>">
+
+			<table>	
+				<tr>
+					<td>게시판 선택</td>
+					<td>
+						<select name="menuName" id="menuNameS">
+							<option value="" >게시판을 선택해 주세요.</option>
+							<c:forEach  var="menu" items="${menuList }">
+								<option value="${menu.menuName }">${menu.menuName }</option>
+							</c:forEach>
+						</select>
+					</td>
+				</tr>			
+				<tr>
+					<td>제목</td>
+					<td><input type="text" id="titleS" name="title"></td>
+				</tr>
+				<tr>
+					<td>내용</td>
+					<td><textarea rows="20" cols="80" name="content"></textarea></td>
+				</tr>
+				<tr>
+					<td>파일</td>
+					<td>추가예정</td>
+				</tr>
+			</table>
+			<input type="button" value="작성 완료" onclick="storagePost()">
+		</form>
 	</c:if>
 	
-	<input type="button" value="작성 취소" onclick="javascript:location.href='bulletinBoard'">
+	<input type="button" value="작성 취소" onclick="javascript:location.href='storageBoard'">
 </body>
 </html>

@@ -2,10 +2,13 @@ package kr.or.connect.homepage.dao;
 
 import static kr.or.connect.homepage.dao.BoardDaoSqls.*;
 
+import java.io.File;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -33,6 +36,28 @@ public class StorageBoardDao {
 	
 	public List<Storage> selectAll(){
 		return jdbc.query(STORAGE_SELECT_ALL, Collections.emptyMap(), storageRowMapper);
+	}
+	
+	public List<Storage> boardMenuSelectByMenuName(String menuName) {
+		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
+		return jdbc.query(STORAGE_SELECT_MENU_NAME, params, storageRowMapper);
+	}
+	
+	public void requestInsert(HttpServletRequest request){
+		Storage storage = new Storage();
+		String menu =  request.getParameter("menuName");
+		String title =  request.getParameter("title");
+		String content = request.getParameter("content");
+		Date date = new Date();
+		//File file = null;
+		
+		storage.setMenu(menu);
+		storage.setTitle(title);
+		storage.setContent(content);
+		storage.setRegdate(date);
+		//storage.setFile(file);
+		
+		insert(storage);
 	}
 	
 	public int insert(Storage storage){

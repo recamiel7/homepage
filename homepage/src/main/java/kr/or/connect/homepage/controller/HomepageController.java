@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import kr.or.connect.homepage.dao.BoardMenuDao;
 import kr.or.connect.homepage.dao.BulletinBoardDao;
+import kr.or.connect.homepage.dao.StorageBoardDao;
 import kr.or.connect.homepage.dto.BoardMenu;
 import kr.or.connect.homepage.dto.Bulletin;
+import kr.or.connect.homepage.dto.Storage;
 import kr.or.connect.homepage.config.ApplicationConfig;
 import kr.or.connect.homepage.service.HomepageService;
 
@@ -42,7 +44,42 @@ public class HomepageController {
 	}
 
 	@GetMapping(path = "/storageBoard")
-	public String storage() {
+	public String storage(Model model, HttpSession session) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
+		StorageBoardDao boardDao = ac.getBean(StorageBoardDao.class);
+		try {
+			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("storageBoard");
+			model.addAttribute("menuList", menuList);
+			List<Storage> boardLsit = boardDao.selectAll();
+			model.addAttribute("boardList", boardLsit);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "board/storageBoard";
+	}
+	
+	@PostMapping(path = "/storageBoard")
+	public String storage2(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
+		StorageBoardDao boardDao = ac.getBean(StorageBoardDao.class);
+		try {
+			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("storageBoard");
+			model.addAttribute("menuList", menuList);
+			if (menuName != null) {
+				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+				List<Storage> changeBoardList = storageBoardDao.boardMenuSelectByMenuName(menuName);
+				model.addAttribute("boardList", changeBoardList);
+			} else {
+				List<Storage> boardLsit = boardDao.selectAll();
+				model.addAttribute("boardList", boardLsit);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 		return "board/storageBoard";
 	}
 
@@ -87,7 +124,7 @@ public class HomepageController {
 	}
 
 	// 게시판
-	@RequestMapping(value = "menuInsert", method = RequestMethod.POST)
+	@PostMapping(path = "/menuInsert")
 	public void menuInsert(@RequestParam("boardName") String boardName, @RequestParam("menuName") String menuName,
 			HttpSession session) {
 
@@ -105,19 +142,29 @@ public class HomepageController {
 		System.out.println("메뉴 추가 완료");
 	}
 
-	@RequestMapping(value = "bulletinContent", method = RequestMethod.POST)
-	public void getContent(@RequestParam("no") String no, HttpSession session, PrintWriter out) {
+	@PostMapping(path = "/getContent")
+	public void getContent(@RequestParam("boardName") String boardName, @RequestParam("no") String no,
+			HttpSession session, PrintWriter out) {
 
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 
-		BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+		if (boardName.equals("bulletinBoard")) {
+			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+			Bulletin bulletin = bulletinBoardDao.selectByNo((Integer.valueOf(no)));
 
-		Bulletin bulletin = bulletinBoardDao.selectByNo((Integer.valueOf(no)));
+			System.out.println("자유게시판 게시글 읽어오기 성공");
 
-		System.out.println("자유게시판 게시글 읽어오기 성공");
+			session.setAttribute("boardContentB", bulletin);
+		}
 
-		session.setAttribute("boardContent", bulletin);
+		else if (boardName.equals("storageBoard")) {
+			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+			Storage storage = storageBoardDao.selectByNo((Integer.valueOf(no)));
 
+			System.out.println("소스 관련 게시판 게시글 읽어오기 성공");
+
+			session.setAttribute("boardContentS", storage);
+		}
 	}
 
 	@GetMapping(path = "/write")
@@ -133,7 +180,7 @@ public class HomepageController {
 		return "board/write";
 	}
 
-	@RequestMapping(value = "write", method = RequestMethod.POST)
+	@PostMapping(path = "/write")
 	public String postWrite(@RequestParam("boardName") String boardName, HttpServletRequest request) {
 
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
@@ -141,11 +188,12 @@ public class HomepageController {
 			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
 			bulletinBoardDao.requestInsert(request);
 		} else if (boardName.equals("storageBoard")) {
-
+			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+			storageBoardDao.requestInsert(request);
 		} else {
 
 		}
 
-		return "bulletinBoard";
+		return "board/" + boardName;
 	}
 }
