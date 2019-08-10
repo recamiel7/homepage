@@ -1,10 +1,12 @@
 package kr.or.connect.homepage.controller;
 
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.SynchronousQueue;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,37 +14,74 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.Gson;
+
 import kr.or.connect.homepage.dao.BoardMenuDao;
 import kr.or.connect.homepage.dao.BulletinBoardDao;
+import kr.or.connect.homepage.dao.ScheduleDao;
 import kr.or.connect.homepage.dao.StorageBoardDao;
 import kr.or.connect.homepage.dto.BoardMenu;
 import kr.or.connect.homepage.dto.Bulletin;
+import kr.or.connect.homepage.dto.Schedule;
 import kr.or.connect.homepage.dto.Storage;
 import kr.or.connect.homepage.config.ApplicationConfig;
-import kr.or.connect.homepage.service.HomepageService;
+
+import kr.or.connect.homepage.service.HomepageServiceImpl;
 
 @Controller
 public class HomepageController {
-	/*
-	 * @Autowired HomepageService homepageService;
-	 */
+	
+	/*@Autowired 
+	HomepageService HomepageService;*/
+
 
 	@GetMapping(path = "/home")
 	public String home(HttpSession session) {
 		return "home";
 	}
 
+	
+/*---------------    일정관리      ---------------*/
+	
 	@GetMapping(path = "/schedule")
-	public String schedule() {
+	public String schedule(Model model) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		ScheduleDao scheduleDao = ac.getBean(ScheduleDao.class);
+		
+		List<Schedule> scheduleList = scheduleDao.selectAll();
+		
+		model.addAttribute("scheduleList",scheduleList);
+		
 		return "schedule/schedule";
 	}
 
+	//일정 작성용 페이지
+	@GetMapping(path = "/scheduleInsert")
+	public String scheduleInsertPage() {
+		return "schedule/scheduleInsert";
+	}
+	
+	@PostMapping(path = "/scheduleInsert")
+	public String scheduleInsert(Model model, HttpServletRequest request) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		ScheduleDao scheduleDao = ac.getBean(ScheduleDao.class);
+		scheduleDao.requestInsert(request);
+		
+		List<Schedule> scheduleList = scheduleDao.selectAll();
+		
+		model.addAttribute("scheduleList",scheduleList);
+		
+		return "schedule/schedule";
+	}
+	
+
+/*---------------    소스관리게시판      ---------------*/
+	
 	@GetMapping(path = "/storageBoard")
 	public String storage(Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
@@ -61,7 +100,7 @@ public class HomepageController {
 	}
 	
 	@PostMapping(path = "/storageBoard")
-	public String storage2(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
+	public String storageBoardListChange(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
 		StorageBoardDao boardDao = ac.getBean(StorageBoardDao.class);
@@ -83,6 +122,9 @@ public class HomepageController {
 		return "board/storageBoard";
 	}
 
+	
+/*---------------    자유게시판      ---------------*/
+	
 	@GetMapping(path = "/bulletinBoard")
 	public String bulletin(Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
@@ -101,7 +143,7 @@ public class HomepageController {
 	}
 
 	@PostMapping(path = "/bulletinBoard")
-	public String bulletin2(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
+	public String bulletinBoardListChange(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
 		BulletinBoardDao boardDao = ac.getBean(BulletinBoardDao.class);
@@ -123,8 +165,10 @@ public class HomepageController {
 		return "board/bulletinBoard";
 	}
 
-	// 게시판
+/*---------------    게시판 공통      ---------------*/
+	
 	@PostMapping(path = "/menuInsert")
+	@ResponseBody
 	public void menuInsert(@RequestParam("boardName") String boardName, @RequestParam("menuName") String menuName,
 			HttpSession session) {
 
@@ -143,6 +187,7 @@ public class HomepageController {
 	}
 
 	@PostMapping(path = "/getContent")
+	@ResponseBody
 	public void getContent(@RequestParam("boardName") String boardName, @RequestParam("no") String no,
 			HttpSession session, PrintWriter out) {
 

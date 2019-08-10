@@ -40,7 +40,7 @@ public class BulletinBoardDao {
 
 	public List<Bulletin> boardMenuSelectByMenuName(String menuName) {
 		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
-		return jdbc.query(BULLETIN_SELECT_MENU_NAME, params, bulletinRowMapper);
+		return jdbc.query(BULLETIN_SELECT_BY_MENU_NAME, params, bulletinRowMapper);
 	}
 	
 	public void requestInsert(HttpServletRequest request){

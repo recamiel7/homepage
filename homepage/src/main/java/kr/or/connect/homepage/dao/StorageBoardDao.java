@@ -40,7 +40,7 @@ public class StorageBoardDao {
 	
 	public List<Storage> boardMenuSelectByMenuName(String menuName) {
 		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
-		return jdbc.query(STORAGE_SELECT_MENU_NAME, params, storageRowMapper);
+		return jdbc.query(STORAGE_SELECT_BY_MENU_NAME, params, storageRowMapper);
 	}
 	
 	public void requestInsert(HttpServletRequest request){
