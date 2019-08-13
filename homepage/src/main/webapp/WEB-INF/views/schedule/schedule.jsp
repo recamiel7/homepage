@@ -70,53 +70,7 @@
 <body>
 	<!-- main_body top -->
 	<div id="main_body">
-
-		<div id="button_box">
-			<ul id="member_button">
-				<c:if test="${sessionScope.loginUser !=null }">
-						${sessionScope.loginUser.getUserId() } 회원님 환영합니다.
-					</c:if>
-
-				<li><a href="./home"> <span class="login_txt">홈으로</span>
-				</a></li>
-
-				<c:if test="${sessionScope.loginUser ==null }">
-					<li><a href="./loginForm"> <span class="login_txt">로그인</span>
-					</a></li>
-					<li><a href="./signUp"> <span class="sign_up_txt">회원가입</span>
-					</a></li>
-				</c:if>
-
-				<c:if test="${sessionScope.loginUser !=null }">
-					<li><a href="./logout"> <span class="logout_txt">로그아웃</span>
-					</a></li>
-				</c:if>
-
-			</ul>
-		</div>
-
-		<!-- header top -->
-		<div id="header">
-			<h1>리카미엘의 홈페이지</h1>
-		</div>
-		<!-- header end -->
-
-		<!-- nav top -->
-		<div id="nav">
-			<ul id="main_menu">
-				<li><a href="./schedule"> <span class="schedule_txt">일정
-							관리</span>
-				</a></li>
-				<li><a href="./storageBoard"> <span
-						class="storage_board_txt">소스 관리 게시판</span>
-				</a></li>
-				<li><a href="./bulletinBoard"> <span
-						class="bulletin_board_txt">자유게시판</span>
-				</a></li>
-			</ul>
-
-		</div>
-		<!-- nav end -->
+		
 		<!-- container top -->
 		<div id="schedule_container">
 			<div id="calendar"></div>

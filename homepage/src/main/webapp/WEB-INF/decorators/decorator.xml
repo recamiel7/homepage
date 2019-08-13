@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- default directory 설정 -->
+<decorators defaultdir="/WEB-INF/decorators">
+
+	<decorator name="maindeco" page="headerDecorator.jsp">
+		<pattern>/home</pattern>
+		<pattern>/bulletinBoard</pattern>
+		<pattern>/storageBoard</pattern>
+		<pattern>/schedule</pattern>
+	</decorator>
+	
+	<!-- decorators를 적용시키지 않을 url 패턴 -->
+	<excludes>
+	</excludes>
+</decorators>

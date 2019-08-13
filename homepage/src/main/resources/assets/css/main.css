@@ -20,6 +20,14 @@ a:hover, a:active, a:focus{
 }
 
 /* layout */
+#header_deco{
+	clear: both;
+	width: 1000px;
+	margin-top: 0px;
+    margin-right: auto;
+    margin-bottom: 0px;
+    margin-left: auto;
+}
 #main_body{
 	clear: both;
 	width: 1000px;
