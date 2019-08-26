@@ -2,7 +2,6 @@ package kr.or.connect.homepage.dao;
 
 import static kr.or.connect.homepage.dao.BoardDaoSqls.*;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -49,13 +48,29 @@ public class StorageBoardDao {
 		String title =  request.getParameter("title");
 		String content = request.getParameter("content");
 		Date date = new Date();
-		//File file = null;
+				
+		storage.setMenu(menu);
+		storage.setTitle(title);
+		storage.setContent(content);
+		storage.setRegdate(date);
+		
+		insert(storage);
+	}
+	
+	public void requestInsert(HttpServletRequest request,String fileName, String filePath, String fileType){
+		Storage storage = new Storage();
+		String menu =  request.getParameter("menuName");
+		String title =  request.getParameter("title");
+		String content = request.getParameter("content");
+		Date date = new Date();
 		
 		storage.setMenu(menu);
 		storage.setTitle(title);
 		storage.setContent(content);
 		storage.setRegdate(date);
-		//storage.setFile(file);
+		storage.setFileName(fileName);
+		storage.setFilePath(filePath);
+		storage.setFileType(fileType);
 		
 		insert(storage);
 	}

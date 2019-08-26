@@ -146,6 +146,9 @@
 							<span>${boardContentS.content }</span>
 						</div>
 						<br>
+							<c:if test="${boardContentS.fileName != null }">
+								파일 다운로드 <a href="<c:url value='/download?boardName=storageBoard&no=${boardContentS.no }'/>">${boardContentS.fileName}</a>
+							</c:if>
 						<hr>
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='storageBoard'">

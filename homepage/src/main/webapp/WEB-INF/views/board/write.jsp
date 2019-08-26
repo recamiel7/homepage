@@ -40,7 +40,7 @@
 
 	
 	<c:if test='<%=boardName.equals("bulletinBoard")%>'>
-		<form action="write" method="post" id="bulletinPost">
+		<form action="write" method="post" enctype="multipart/form-data" id="bulletinPost" >
 			<input type="hidden" name="boardName" value="<%=boardName %>">
 			<input type="hidden" name="userId" value="${loginUser.userId }">
 
@@ -70,13 +70,17 @@
 					<td>내용</td>
 					<td><textarea rows="20" cols="80" name="content"></textarea></td>
 				</tr>
+				<tr>
+					<td>파일</td>
+					<td><input type="file" name="file"></td>
+				</tr>
 			</table>
 			<input type="button" value="작성 완료" onclick="bulletinPost()">
 		</form>
 	</c:if>
 
 	<c:if test='<%=boardName.equals("storageBoard")%>'>
-		<form action="write" method="post" id="storagePost">
+		<form action="write" method="post" enctype="multipart/form-data" id="storagePost" >
 			<input type="hidden" name="boardName" value="<%=boardName %>">
 
 			<table>	
@@ -99,15 +103,12 @@
 					<td>내용</td>
 					<td><textarea rows="20" cols="80" name="content"></textarea></td>
 				</tr>
-				<tr>
-					<td>파일</td>
-					<td>추가예정</td>
-				</tr>
 			</table>
+			파일 <input type="file" name="file"><br>
 			<input type="button" value="작성 완료" onclick="storagePost()">
 		</form>
 	</c:if>
 	
-	<input type="button" value="작성 취소" onclick="javascript:location.href='storageBoard'">
+	<input type="button" value="작성 취소" onclick="javascript:location.href='<%=boardName%>'">
 </body>
 </html>

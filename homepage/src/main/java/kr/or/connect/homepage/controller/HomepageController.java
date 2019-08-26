@@ -1,6 +1,11 @@
 package kr.or.connect.homepage.controller;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.gson.Gson;
+import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.connect.homepage.dao.BoardMenuDao;
 import kr.or.connect.homepage.dao.BulletinBoardDao;
@@ -166,7 +170,7 @@ public class HomepageController {
 	}
 
 /*---------------    게시판 공통      ---------------*/
-	
+	//각 게시판 메뉴 추가
 	@PostMapping(path = "/menuInsert")
 	@ResponseBody
 	public void menuInsert(@RequestParam("boardName") String boardName, @RequestParam("menuName") String menuName,
@@ -185,7 +189,8 @@ public class HomepageController {
 
 		System.out.println("메뉴 추가 완료");
 	}
-
+	
+	//게시글 읽어오기
 	@PostMapping(path = "/getContent")
 	@ResponseBody
 	public void getContent(@RequestParam("boardName") String boardName, @RequestParam("no") String no,
@@ -211,7 +216,8 @@ public class HomepageController {
 			session.setAttribute("boardContentS", storage);
 		}
 	}
-
+	
+	//게시글 작성 페이지
 	@GetMapping(path = "/write")
 	public String write(@RequestParam("boardName") String boardName, Model model) {
 
@@ -225,20 +231,101 @@ public class HomepageController {
 		return "board/write";
 	}
 
+	//게시글 작성
 	@PostMapping(path = "/write")
-	public String postWrite(@RequestParam("boardName") String boardName, HttpServletRequest request) {
+	public String postWrite(@RequestParam("boardName") String boardName, 
+							@RequestParam(required= false, name="file") MultipartFile file, HttpServletRequest request) {
 
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		if(file.getSize() != 0){
+			
+			System.out.println("파일 이름 : " + file.getOriginalFilename());
+			System.out.println("파일 크기 : " + file.getSize());
+			
+			String fileName = file.getOriginalFilename();
+			String filePath;
+			String fileType = file.getContentType();
+			
+			if (boardName.equals("bulletinBoard")) {
+				filePath = "D:/tmp/bulletin/" + file.getOriginalFilename();
+				BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+				bulletinBoardDao.requestInsert(request,fileName,filePath,fileType);
+			}else{
+				filePath = "D:/tmp/storage/" + file.getOriginalFilename();
+				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+				storageBoardDao.requestInsert(request,fileName,filePath,fileType);
+			}
+			
+	        try(
+	                FileOutputStream fos = new FileOutputStream(filePath);
+	                InputStream is = file.getInputStream();
+	        ){
+	        	    int readCount = 0;
+	        	    byte[] buffer = new byte[1024];
+	            while((readCount = is.read(buffer)) != -1){
+	                fos.write(buffer,0,readCount);
+	            }
+	        }catch(Exception ex){
+	            throw new RuntimeException("file Save Error");
+	        }
+	        
+		}else{
+			if (boardName.equals("bulletinBoard")) {
+				BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+				bulletinBoardDao.requestInsert(request);
+			} else if (boardName.equals("storageBoard")) {
+				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+				storageBoardDao.requestInsert(request);
+			} else {
+
+			}
+		}
+		
+		return "redirect:"+boardName;
+	}
+	
+	@GetMapping("/download")
+	public void download(@RequestParam("boardName") String boardName, @RequestParam("no") int no, HttpServletResponse response) {
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		String fileName,filePath,contentType;
+		
 		if (boardName.equals("bulletinBoard")) {
 			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
-			bulletinBoardDao.requestInsert(request);
-		} else if (boardName.equals("storageBoard")) {
+			Bulletin bulletin = bulletinBoardDao.selectByNo(no);
+			
+			fileName = bulletin.getFileName();
+			filePath = bulletin.getFilePath();
+			contentType = bulletin.getFileType();
+		} else{
 			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
-			storageBoardDao.requestInsert(request);
-		} else {
-
-		}
-
-		return "board/" + boardName;
+			Storage storage = storageBoardDao.selectByNo(no);
+			
+			fileName = storage.getFileName();
+			filePath = storage.getFilePath();
+			contentType = storage.getFileType();
+		} 
+		
+		response.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\";");
+		response.setHeader("Content-Transfer-Encoding", "binary");
+		response.setHeader("Content-Type", contentType);
+		response.setHeader("Pragma", "no-cache;");
+		response.setHeader("Expires", "-1;");
+		
+		try(
+                FileInputStream fis = new FileInputStream(filePath);
+                OutputStream out = response.getOutputStream();
+        ){
+        	    int readCount = 0;
+        	    byte[] buffer = new byte[1024];
+            while((readCount = fis.read(buffer)) != -1){
+            		out.write(buffer,0,readCount);
+            }
+        }catch(Exception ex){
+            throw new RuntimeException("file Save Error");
+        }
+		
 	}
+
 }

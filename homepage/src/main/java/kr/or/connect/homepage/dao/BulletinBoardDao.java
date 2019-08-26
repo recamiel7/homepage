@@ -60,6 +60,26 @@ public class BulletinBoardDao {
 		insert(bulletin);
 	}
 	
+	public void requestInsert(HttpServletRequest request, String fileName, String filePath, String fileType) {
+		Bulletin bulletin = new Bulletin();
+		String userId =  request.getParameter("userId");
+		String menu =  request.getParameter("menuName");
+		String title =  request.getParameter("title");
+		String content = request.getParameter("content");
+		Date date = new Date();
+		
+		bulletin.setUserId(userId);
+		bulletin.setMenu(menu);
+		bulletin.setTitle(title);
+		bulletin.setContent(content);
+		bulletin.setRegdate(date);
+		bulletin.setFileName(fileName);
+		bulletin.setFilePath(filePath);
+		bulletin.setFileType(fileType);
+		
+		insert(bulletin);
+	}
+	
 	public int insert(Bulletin bulletin){
 		SqlParameterSource params = new BeanPropertySqlParameterSource(bulletin);
 		return insertAction.execute(params);

@@ -99,7 +99,8 @@
 			<div id="board_content">
 				<!-- 게시글 리스트 -->
 				<div id="postList">
-
+					
+					
 					<table id="list_table">
 						<thead>
 							<tr>
@@ -144,6 +145,9 @@
 							<span>${boardContentB.content }</span>
 						</div>
 						<br>
+							<c:if test="${boardContentB.fileName != null }">
+								파일 다운로드 <a href="<c:url value='/download?boardName=bulletinBoard&no=${boardContentB.no }'/>">${boardContentB.fileName}</a>
+							</c:if>
 						<hr>
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='bulletinBoard'">

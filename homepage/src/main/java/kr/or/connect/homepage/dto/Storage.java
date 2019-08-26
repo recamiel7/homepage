@@ -1,13 +1,11 @@
 package kr.or.connect.homepage.dto;
 
-import java.io.File;
 import java.util.Date;
 
 public class Storage {
 	private int no;
-	private String menu, title, content;
+	private String menu, title, content, fileName, filePath, fileType;
 	private Date regdate;
-	private File file;
 	
 	public int getNo() {
 		return no;
@@ -39,12 +37,23 @@ public class Storage {
 	public void setRegdate(Date regdate) {
 		this.regdate = regdate;
 	}
-	public File getFile() {
-		return file;
+	public String getFileName() {
+		return fileName;
 	}
-	public void setFile(File file) {
-		this.file = file;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
-	
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	public String getFileType() {
+		return fileType;
+	}
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
 	
 }
