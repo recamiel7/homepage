@@ -55,11 +55,11 @@ function checking(){
 </head>
 <body>
 <input type="button" value="중복 확인" onclick="checkId()"><br>
-<form name="registForm" method="post" action="regist">
+<form name="registForm" method="post" action="regist" enctype="multipart/form-data">
 아이디 : <input type="text" id="id" name="id">
 패스워드 : <input type="text" name="password"><br>
 패스워드 확인: <input type="text" name="passwordCheck"><br>
-프로필사진 : (추가예정) <br>
+프로필사진 : <input type="file" id="reviewImageFileOpenInput" name="image" accept="image/*" > <br>
 <input id="checkId" type="hidden" value="n">
 <input type="button" value="확인" onclick="checking()">
 </form>

@@ -1,10 +1,7 @@
 package kr.or.connect.homepage.dto;
 
-import java.io.File;
-
 public class User {
-	private String userId, password;
-	private File image;
+	private String userId, password, fileName, filePath, fileType;
 	
 	public String getUserId() {
 		return userId;
@@ -18,11 +15,23 @@ public class User {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	public File getImage() {
-		return image;
+	public String getFileName() {
+		return fileName;
 	}
-	public void setImage(File image) {
-		this.image = image;
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	public String getFilePath() {
+		return filePath;
+	}
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+	public String getFileType() {
+		return fileType;
+	}
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
 	}
 	@Override
 	public String toString() {
