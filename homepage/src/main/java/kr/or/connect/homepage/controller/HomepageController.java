@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -27,10 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import kr.or.connect.homepage.dao.BoardMenuDao;
 import kr.or.connect.homepage.dao.BulletinBoardDao;
+import kr.or.connect.homepage.dao.CommentDao;
 import kr.or.connect.homepage.dao.ScheduleDao;
 import kr.or.connect.homepage.dao.StorageBoardDao;
 import kr.or.connect.homepage.dto.BoardMenu;
 import kr.or.connect.homepage.dto.Bulletin;
+import kr.or.connect.homepage.dto.Comment;
 import kr.or.connect.homepage.dto.Schedule;
 import kr.or.connect.homepage.dto.Storage;
 import kr.or.connect.homepage.config.ApplicationConfig;
@@ -39,6 +43,7 @@ import kr.or.connect.homepage.service.HomepageServiceImpl;
 
 @Controller
 public class HomepageController {
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 	
 	/*@Autowired 
 	HomepageService HomepageService;*/
@@ -183,11 +188,12 @@ public class HomepageController {
 		BoardMenu boardMenu = new BoardMenu();
 		boardMenu.setBoardName(boardName);
 		boardMenu.setMenuName(menuName);
-		System.out.println("입력이 완료되었습니다.");
+		logger.debug("{} 게시판에 추가할 메뉴({})의 boardMenu dto 생성 및 입력 완료",boardName, menuName);
 
 		boardMenuDao.insert(boardMenu);
 
-		System.out.println("메뉴 추가 완료");
+		logger.debug("{} 게시판에 메뉴({}) 추가 완료",boardName, menuName);
+
 	}
 	
 	//게시글 읽어오기
@@ -202,7 +208,7 @@ public class HomepageController {
 			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
 			Bulletin bulletin = bulletinBoardDao.selectByNo((Integer.valueOf(no)));
 
-			System.out.println("자유게시판 게시글 읽어오기 성공");
+			logger.debug("{} 게시글 읽어오기 성공",boardName);
 
 			session.setAttribute("boardContentB", bulletin);
 		}
@@ -211,7 +217,7 @@ public class HomepageController {
 			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
 			Storage storage = storageBoardDao.selectByNo((Integer.valueOf(no)));
 
-			System.out.println("소스 관련 게시판 게시글 읽어오기 성공");
+			logger.debug("{} 게시글 읽어오기 성공",boardName);
 
 			session.setAttribute("boardContentS", storage);
 		}
@@ -240,8 +246,8 @@ public class HomepageController {
 		
 		if(file.getSize() != 0){
 			
-			System.out.println("파일 이름 : " + file.getOriginalFilename());
-			System.out.println("파일 크기 : " + file.getSize());
+			logger.debug("파일 이름 : {}",file.getOriginalFilename());
+			logger.debug("파일 크기 : {}",file.getSize());
 			
 			String fileName = file.getOriginalFilename();
 			String filePath;
@@ -280,8 +286,7 @@ public class HomepageController {
 			} else {
 
 			}
-		}
-		
+		}		
 		return "redirect:"+boardName;
 	}
 	
@@ -323,9 +328,26 @@ public class HomepageController {
             		out.write(buffer,0,readCount);
             }
         }catch(Exception ex){
-            throw new RuntimeException("file Save Error");
+            throw new RuntimeException("file Download Error");
         }
 		
 	}
-
+	
+	
+	//댓글 등록
+	@PostMapping(path="/commentInsert")
+	public void commentInsert(@RequestParam("boardName") String boardName, @RequestParam("contentNo") int contentNo,
+							@RequestParam("userId") String userId, @RequestParam("comment") String comment){
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		CommentDao commentDao = ac.getBean(CommentDao.class);
+		Comment boardComment = new Comment();
+		boardComment.setBoardName(boardName);
+		boardComment.setContentNo(contentNo);
+		boardComment.setComment(comment);
+		boardComment.setUserId(userId);
+		commentDao.insert(boardComment); 
+		
+		logger.debug("{}", boardComment.toString());
+	}
 }

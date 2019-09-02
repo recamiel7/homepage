@@ -36,6 +36,31 @@
 		}
 	}
 	
+	function commentInsert(){
+		if($("#comment").val() == ""){
+			alert("댓글을 입력하세요");
+		}else{
+			$.post("commentInsert",
+
+					{
+						"boardName" : $('#boardName').val(),
+						"userId" : $('#commentUserId').val(),
+						"comment" : $('#comment').val(),
+						"contentNo" : $('#no').val(),
+					},
+
+					function(data, status) {
+						if (status == "success") {
+							alert("댓글 추가 성공");
+						} else {
+							alert("댓글 추가 실패");
+						}
+					}
+
+			);
+		}
+	}
+	
 	function changeBoardList(menuName) {
 		var form = document.createElement('form');
 		var objs;
@@ -151,8 +176,21 @@
 						<hr>
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='bulletinBoard'">
-						<c:if test="">
+						<c:if test="${loginUser.userId.equals(boardContentB.userId) }">
 							<input type="button" value="수정" onclick="">
+						</c:if>
+						<hr>
+						
+						<!-- 게시글 댓글영역 -->
+						<c:if test="${commentList != null }">
+							
+						</c:if>
+						<c:if test="${loginUser != null }">
+							<div>
+								<input type="hidden" id="commentUserId" value="${loginUser.userId }">
+								<input type="text" name="comment" id="comment">
+								<input type="button" value="댓글 등록" onclick="commentInsert()">
+							</div>
 						</c:if>
 					</c:if>
 					<c:if test="${boardContentB == null }">

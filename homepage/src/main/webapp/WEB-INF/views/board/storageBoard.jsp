@@ -38,6 +38,31 @@
 		}
 	}
 	
+	function commentInsert(){
+		if($("#comment").val() == ""){
+			alert("댓글을 입력하세요");
+		}else{
+			$.post("commentInsert",
+
+					{
+						"boardName" : $('#boardName').val(),
+						"userId" : $('#commentUserId').val(),
+						"comment" : $('#comment').val(),
+						"contentNo" : $('#no').val(),
+					},
+
+					function(data, status) {
+						if (status == "success") {
+							alert("댓글 추가 성공");
+						} else {
+							alert("댓글 추가 실패");
+						}
+					}
+
+			);
+		}
+	}
+	
 	function changeBoardList(menuName) {
 		var form = document.createElement('form');
 		var objs;
@@ -131,7 +156,11 @@
 
 				<!-- 게시글 내용 -->
 				<div id="postContent">
+				
+					<!-- 게시글이 있을 경우 -->
 					<c:if test="${boardContentS != null }">
+					
+						<!-- 게시글 본문 -->
 						<input type="hidden" id="no" value="${boardContentS.no }">
 						<div>
 							<b>${boardContentS.title }</b> | <span>${boardContentS.menu }</span>
@@ -152,10 +181,26 @@
 						<hr>
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='storageBoard'">
-						<c:if test="">
+						<c:if test="${sessionScope.checkAdmin }">
 							<input type="button" value="수정" onclick="">
 						</c:if>
+						<hr>
+						
+						<!-- 게시글 댓글영역 -->
+						<c:if test="${commentList != null }">
+							
+						</c:if>
+						<c:if test="${loginUser != null }">
+							<div>
+								<input type="hidden" id="commentUserId" value="${loginUser.userId }">
+								<input type="text" name="comment" id="comment">
+								<input type="button" value="댓글 등록" onclick="commentInsert()">
+							</div>
+						</c:if>
+						
 					</c:if>
+					
+					<!-- 게시글이 존재하지 않을 경우 -->
 					<c:if test="${boardContentS == null }">
 						<div>
 							삭제되었거나 없는 글입니다. 
