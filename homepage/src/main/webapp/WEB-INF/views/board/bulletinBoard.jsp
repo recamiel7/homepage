@@ -167,7 +167,7 @@
 						</div>
 						<br>
 						<div>
-							<span>${boardContentB.content }</span>
+							<pre>${boardContentB.content }</pre>
 						</div>
 						<br>
 							<c:if test="${boardContentB.fileName != null }">
@@ -182,13 +182,23 @@
 						<hr>
 						
 						<!-- 게시글 댓글영역 -->
-						<c:if test="${commentList != null }">
-							
+						<c:if test="${commentListB != null}">
+							<c:forEach items="${commentListB }" var="CList">
+									<tbody>
+									<tr>
+										<td><img src="getImage?id=${CList.userId }" width="20" height="20"></td>
+										<td align="center">
+											<b>${CList.userId }</b>
+											<pre>${CList.comment }</pre>
+										</td>
+									</tr>
+								</tbody>						
+							</c:forEach>
 						</c:if>
 						<c:if test="${loginUser != null }">
 							<div>
 								<input type="hidden" id="commentUserId" value="${loginUser.userId }">
-								<input type="text" name="comment" id="comment">
+								<textarea rows="5" cols="80" name="comment" id="comment"></textarea>
 								<input type="button" value="댓글 등록" onclick="commentInsert()">
 							</div>
 						</c:if>

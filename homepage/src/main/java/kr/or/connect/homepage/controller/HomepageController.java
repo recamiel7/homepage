@@ -200,27 +200,39 @@ public class HomepageController {
 	@PostMapping(path = "/getContent")
 	@ResponseBody
 	public void getContent(@RequestParam("boardName") String boardName, @RequestParam("no") String no,
-			HttpSession session, PrintWriter out) {
+			HttpSession session) {
 
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		try {
+			if (boardName.equals("bulletinBoard")) {
+				BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+				Bulletin bulletin = bulletinBoardDao.selectByNo((Integer.valueOf(no)));
+				CommentDao commentDao = ac.getBean(CommentDao.class);
+				List<Comment> commentList = commentDao.selectByContentNo(boardName, Integer.toString(bulletin.getNo()));
 
-		if (boardName.equals("bulletinBoard")) {
-			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
-			Bulletin bulletin = bulletinBoardDao.selectByNo((Integer.valueOf(no)));
+				logger.debug("{} 게시글 읽어오기 성공",boardName);
+				logger.debug("{}, 댓글 갯수 {}",boardName,commentList.size());
 
-			logger.debug("{} 게시글 읽어오기 성공",boardName);
+				session.setAttribute("boardContentB", bulletin);
+				session.setAttribute("commentListB", commentList);
+			}
 
-			session.setAttribute("boardContentB", bulletin);
+			else if (boardName.equals("storageBoard")) {
+				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+				Storage storage = storageBoardDao.selectByNo((Integer.valueOf(no)));
+				CommentDao commentDao = ac.getBean(CommentDao.class);
+				List<Comment> commentList = commentDao.selectByContentNo(boardName, Integer.toString(storage.getNo()));
+
+				logger.debug("{} 게시글 읽어오기 성공",boardName);
+				logger.debug("{}, 댓글 갯수 {}",boardName,commentList.size());
+
+				session.setAttribute("boardContentS", storage);
+				session.setAttribute("commentListS", commentList);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
-		else if (boardName.equals("storageBoard")) {
-			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
-			Storage storage = storageBoardDao.selectByNo((Integer.valueOf(no)));
-
-			logger.debug("{} 게시글 읽어오기 성공",boardName);
-
-			session.setAttribute("boardContentS", storage);
-		}
+		
 	}
 	
 	//게시글 작성 페이지
