@@ -9,9 +9,6 @@
 <link href="assets/css/main.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script type="text/javascript">
-	$(document).ready(function() {
-		$("#postContent").hide();
-	})
 
 	function menuInsert() {
 		if ($("#menuName").val() == "") {
@@ -69,30 +66,10 @@
 		objs.setAttribute('name', 'menuName');
 		objs.setAttribute('value', menuName);
 		form.appendChild(objs);
-		form.setAttribute('method', 'post');
+		form.setAttribute('method', 'get');
 		form.setAttribute('action', $('#boardName').val());
 		document.body.appendChild(form);
 		form.submit();
-	}
-
-	function content(no) {
-
-		$.post("getContent",
-
-		{
-			"boardName" : $('#boardName').val(),
-			"no" : no
-		},
-
-		function(data, status) {
-			if (status == "success") {
-				console.log("게시글 읽어오기 성공");
-				$("#postContent").show();
-				$("#postList").hide();
-			} else {
-				alert("게시글 읽어오기 실패");
-			}
-		});
 	}
 
 </script>
@@ -122,94 +99,16 @@
 
 			<!-- 게시글 -->
 			<div id="board_content">
-				<!-- 게시글 리스트 -->
-				<div id="postList">
-					
-					
-					<table id="list_table">
-						<thead>
-							<tr>
-								<th width="10%">No</th>
-								<th width="50%">제목</th>
-								<th width="15%">작성자</th>
-								<th width="25%">올린날</th>
-							</tr>
-						</thead>
-						<c:forEach var="board" items="${boardList }">
-							<tbody>
-								<tr>
-									<td align="center">${board.no }</td>
-									<td align="center"><a onclick="content('${board.no }')">${board.title }</a></td>
-									<td align="center">${board.userId }</td>
-									<td align="center">${board.regdate }</td>
-								</tr>
-							</tbody>
-						</c:forEach>
-					</table>
-					<hr>
-					<c:if test="${sessionScope.loginUser !=null }">
-						<input type="button" value="글 작성하기"
-							onclick="javascript:location.href='write?boardName=bulletinBoard'">
-					</c:if>
-				</div>
-
-				<!-- 게시글 내용 -->
-				<div id="postContent">
-					<c:if test="${boardContentB != null }">
-						<input type="hidden" id="no" value="${boardContentB.no }">
-						<div>
-							<b>${boardContentB.title }</b> | <span>${boardContentB.menu }</span>
-							<span>${boardContentB.regdate }</span>
-						</div>
-						<hr>
-						<div>
-							<b>${boardContentB.userId }</b>
-						</div>
-						<br>
-						<div>
-							<pre>${boardContentB.content }</pre>
-						</div>
-						<br>
-							<c:if test="${boardContentB.fileName != null }">
-								파일 다운로드 <a href="<c:url value='/download?boardName=bulletinBoard&no=${boardContentB.no }'/>">${boardContentB.fileName}</a>
-							</c:if>
-						<hr>
-						<input type="button" value="목록으로"
-							onclick="javascript:location.href='bulletinBoard'">
-						<c:if test="${loginUser.userId.equals(boardContentB.userId) }">
-							<input type="button" value="수정" onclick="">
-						</c:if>
-						<hr>
-						
-						<!-- 게시글 댓글영역 -->
-						<c:if test="${commentListB != null}">
-							<c:forEach items="${commentListB }" var="CList">
-									<tbody>
-									<tr>
-										<td><img src="getImage?id=${CList.userId }" width="20" height="20"></td>
-										<td align="center">
-											<b>${CList.userId }</b>
-											<pre>${CList.comment }</pre>
-										</td>
-									</tr>
-								</tbody>						
-							</c:forEach>
-						</c:if>
-						<c:if test="${loginUser != null }">
-							<div>
-								<input type="hidden" id="commentUserId" value="${loginUser.userId }">
-								<textarea rows="5" cols="80" name="comment" id="comment"></textarea>
-								<input type="button" value="댓글 등록" onclick="commentInsert()">
-							</div>
-						</c:if>
-					</c:if>
-					<c:if test="${boardContentB == null }">
-						<div>
-							삭제되었거나 없는 글입니다. 
-							<input type="button" value="목록으로" onclick="javascript:location.href='bulletinBoard'">
-						</div>
-					</c:if>
-				</div>
+				<c:if test="${type == null }">
+					<jsp:include page="/WEB-INF/views/board/bulletinPostList.jsp" flush="false">
+						<jsp:param value="" name=""/>
+					</jsp:include>
+				</c:if>
+				<c:if test="${type != null }">
+					<jsp:include page="/WEB-INF/views/board/bulletinPost.jsp" flush="false">
+						<jsp:param value="" name=""/>
+					</jsp:include>
+				</c:if>
 			</div>
 		</div>
 		<!-- container end -->

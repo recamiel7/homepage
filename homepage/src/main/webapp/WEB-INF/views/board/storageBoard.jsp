@@ -11,9 +11,6 @@
 	
 </script>
 <script>
-	$(document).ready(function() {
-		$("#postContent").hide();
-	})
 
 	function menuInsert() {
 		if ($("#menuName").val() == "") {
@@ -71,30 +68,10 @@
 		objs.setAttribute('name', 'menuName');
 		objs.setAttribute('value', menuName);
 		form.appendChild(objs);
-		form.setAttribute('method', 'post');
+		form.setAttribute('method', 'get');
 		form.setAttribute('action', $('#boardName').val());
 		document.body.appendChild(form);
 		form.submit();
-	}
-	
-	function content(no) {
-
-		$.post("getContent",
-
-		{
-			"boardName" : $('#boardName').val(),
-			"no" : no
-		},
-
-		function(data, status) {
-			if (status == "success") {
-				console.log("게시글 읽어오기 성공");
-				$("#postContent").show();
-				$("#postList").hide();
-			} else {
-				alert("게시글 읽어오기 실패");
-			}
-		});
 	}
 	
 </script>
@@ -124,100 +101,18 @@
 
 			<!-- 게시글 -->
 			<div id="board_content">
-				<!-- 게시글 리스트 -->
-				<div id="postList">
-					<table id="list_table">
-						<thead>
-							<tr>
-								<th width="10%">No</th>
-								<th width="50%">제목</th>
-								<th width="15%">작성자</th>
-								<th width="25%">올린날</th>
-							</tr>
-						</thead>
-
-						<c:forEach var="board" items="${boardList }">
-							<tbody>
-								<tr>
-									<td align="center">${board.no }</td>
-									<td align="center"><a onclick="content('${board.no }')">${board.title }</a></td>
-									<td align="center">관리자</td>
-									<td align="center">${board.regdate }</td>
-								</tr>
-							</tbody>
-						</c:forEach>
-					</table>
-					<hr>
-					<c:if test="${sessionScope.checkAdmin }">
-						<input type="button" value="글 작성하기"
-							onclick="javascript:location.href='write?boardName=storageBoard'">
-					</c:if>
-				</div>
-
-				<!-- 게시글 내용 -->
-				<div id="postContent">
+				<c:if test="${type == null }">
+					<jsp:include page="/WEB-INF/views/board/storagePostList.jsp" flush="false">
+						<jsp:param value="" name=""/>
+					</jsp:include>
+				</c:if>
 				
-					<!-- 게시글이 있을 경우 -->
-					<c:if test="${boardContentS != null }">
-					
-						<!-- 게시글 본문 -->
-						<input type="hidden" id="no" value="${boardContentS.no }">
-						<div>
-							<b>${boardContentS.title }</b> | <span>${boardContentS.menu }</span>
-							<span>${boardContentS.regdate }</span>
-						</div>
-						<hr>
-						<div>
-							<b>관리자</b>
-						</div>
-						<br>
-						<div>
-							<pre>${boardContentS.content }</pre>
-						</div>
-						<br>
-							<c:if test="${boardContentS.fileName != null }">
-								파일 다운로드 <a href="<c:url value='/download?boardName=storageBoard&no=${boardContentS.no }'/>">${boardContentS.fileName}</a>
-							</c:if>
-						<hr>
-						<input type="button" value="목록으로"
-							onclick="javascript:location.href='storageBoard'">
-						<c:if test="${sessionScope.checkAdmin }">
-							<input type="button" value="수정" onclick="">
-						</c:if>
-						<hr>
-						
-						<!-- 게시글 댓글영역 -->
-						<c:if test="${commentListS != null}">
-							<c:forEach items="${commentListS }" var="CList">
-									<tbody>
-									<tr>
-										<td><img src="getImage?id=${CList.userId }" width="20" height="20"></td>
-										<td align="center">
-											<b>${CList.userId }</b>
-											<pre>${CList.comment }</pre><br>
-										</td>
-									</tr>
-								</tbody>						
-							</c:forEach>
-						</c:if>
-						<c:if test="${loginUser != null }">
-							<div>
-								<input type="hidden" id="commentUserId" value="${loginUser.userId }">
-								<textarea rows="5" cols="80" name="comment" id="comment"></textarea>
-								<input type="button" value="댓글 등록" onclick="commentInsert()">
-							</div>
-						</c:if>
-						
-					</c:if>
-					
-					<!-- 게시글이 존재하지 않을 경우 -->
-					<c:if test="${boardContentS == null }">
-						<div>
-							삭제되었거나 없는 글입니다. 
-							<input type="button" value="목록으로" onclick="javascript:location.href='storageBoard'">
-						</div>
-					</c:if>
-				</div>
+				<c:if test="${type != null }">
+					<jsp:include page="/WEB-INF/views/board/storagePost.jsp" flush="false">
+						<jsp:param value="" name=""/>
+					</jsp:include>
+				</c:if>
+
 			</div>
 		</div>
 		<!-- container end -->

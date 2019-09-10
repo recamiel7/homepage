@@ -92,83 +92,66 @@ public class HomepageController {
 /*---------------    소스관리게시판      ---------------*/
 	
 	@GetMapping(path = "/storageBoard")
-	public String storage(Model model, HttpSession session) {
+	public String storage(@RequestParam(required= false, name="menuName") String menuName, 
+			@RequestParam(required= false, name="contentNo") String contentNo, 
+			@RequestParam(required= false, name="type") String type,
+			Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
-		StorageBoardDao boardDao = ac.getBean(StorageBoardDao.class);
-		try {
-			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("storageBoard");
-			model.addAttribute("menuList", menuList);
-			List<Storage> boardLsit = boardDao.selectAll();
-			model.addAttribute("boardList", boardLsit);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return "board/storageBoard";
-	}
-	
-	@PostMapping(path = "/storageBoard")
-	public String storageBoardListChange(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
-		StorageBoardDao boardDao = ac.getBean(StorageBoardDao.class);
+		StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+		
 		try {
 			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("storageBoard");
 			model.addAttribute("menuList", menuList);
 			if (menuName != null) {
-				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
 				List<Storage> changeBoardList = storageBoardDao.boardMenuSelectByMenuName(menuName);
 				model.addAttribute("boardList", changeBoardList);
+				model.addAttribute("menuName",menuName);
 			} else {
-				List<Storage> boardLsit = boardDao.selectAll();
+				List<Storage> boardLsit = storageBoardDao.selectAll();
 				model.addAttribute("boardList", boardLsit);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if(type!=null){
+			model.addAttribute("type", "content");
+			getContent("storageBoard",contentNo,session);
+		}
 
 		return "board/storageBoard";
 	}
 
-	
 /*---------------    자유게시판      ---------------*/
 	
 	@GetMapping(path = "/bulletinBoard")
-	public String bulletin(Model model, HttpSession session) {
+	public String bulletin(@RequestParam(required= false, name="menuName") String menuName, 
+			@RequestParam(required= false, name="contentNo") String contentNo, 
+			@RequestParam(required= false, name="type") String type,
+			Model model, HttpSession session) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
-		BulletinBoardDao boardDao = ac.getBean(BulletinBoardDao.class);
+		BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
 		try {
 			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("bulletinBoard");
 			model.addAttribute("menuList", menuList);
-			List<Bulletin> boardLsit = boardDao.selectAll();
-			model.addAttribute("boardList", boardLsit);
+			if(menuName != null){
+				List<Bulletin> changeBoardList = bulletinBoardDao.boardMenuSelectByMenuName(menuName);
+				model.addAttribute("boardList",changeBoardList);
+				model.addAttribute("menuName",menuName);
+			}else{
+				List<Bulletin> boardLsit = bulletinBoardDao.selectAll();
+				model.addAttribute("boardList", boardLsit);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
-		return "board/bulletinBoard";
-	}
-
-	@PostMapping(path = "/bulletinBoard")
-	public String bulletinBoardListChange(@RequestParam("menuName") String menuName, Model model, HttpSession session) {
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
-		BulletinBoardDao boardDao = ac.getBean(BulletinBoardDao.class);
-		try {
-			List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll("bulletinBoard");
-			model.addAttribute("menuList", menuList);
-			if (menuName != null) {
-				BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
-				List<Bulletin> changeBoardList = bulletinBoardDao.boardMenuSelectByMenuName(menuName);
-				model.addAttribute("boardList", changeBoardList);
-			} else {
-				List<Bulletin> boardLsit = boardDao.selectAll();
-				model.addAttribute("boardList", boardLsit);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+		
+		if(type!=null){
+			model.addAttribute("type", "content");
+			getContent("bulletinBoard",contentNo,session);
 		}
 
 		return "board/bulletinBoard";
@@ -197,8 +180,6 @@ public class HomepageController {
 	}
 	
 	//게시글 읽어오기
-	@PostMapping(path = "/getContent")
-	@ResponseBody
 	public void getContent(@RequestParam("boardName") String boardName, @RequestParam("no") String no,
 			HttpSession session) {
 
@@ -215,9 +196,10 @@ public class HomepageController {
 
 				session.setAttribute("boardContentB", bulletin);
 				session.setAttribute("commentListB", commentList);
+
 			}
 
-			else if (boardName.equals("storageBoard")) {
+			else{
 				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
 				Storage storage = storageBoardDao.selectByNo((Integer.valueOf(no)));
 				CommentDao commentDao = ac.getBean(CommentDao.class);
@@ -228,10 +210,12 @@ public class HomepageController {
 
 				session.setAttribute("boardContentS", storage);
 				session.setAttribute("commentListS", commentList);
+				
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		}		
 		
 	}
 	
@@ -358,8 +342,8 @@ public class HomepageController {
 		boardComment.setContentNo(contentNo);
 		boardComment.setComment(comment);
 		boardComment.setUserId(userId);
+		logger.debug("{}, {}, {} 댓글 등록 완료", userId,boardName,contentNo);
 		commentDao.insert(boardComment); 
-		
-		logger.debug("{}", boardComment.toString());
+				
 	}
 }
