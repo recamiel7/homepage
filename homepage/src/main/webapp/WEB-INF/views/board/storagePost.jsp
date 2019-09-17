@@ -30,7 +30,8 @@
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='storageBoard?menuName=${menuName}'">
 						<c:if test="${sessionScope.checkAdmin }">
-							<input type="button" value="수정" onclick="">
+							<input type="button" value="수정" onclick="javascript:location.href='update?boardName=storageBoard&contentNo=${boardContentS.no }'">
+							<input type="button" value="삭제" onclick="javascript:location.href='delete?boardName=storageBoard&contentNo=${boardContentS.no }'">
 						</c:if>
 						<hr>
 						

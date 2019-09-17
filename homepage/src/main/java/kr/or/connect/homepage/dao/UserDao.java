@@ -2,8 +2,6 @@ package kr.or.connect.homepage.dao;
 
 import static kr.or.connect.homepage.dao.UserDaoSqls.*;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +17,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
-import com.mysql.jdbc.util.Base64Decoder;
-
 import kr.or.connect.homepage.dto.User;
-import kr.or.connect.homepage.dto.UserImage;
 
 @Repository
 public class UserDao {

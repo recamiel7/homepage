@@ -226,9 +226,10 @@ public class HomepageController {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
 
-		System.out.println(boardName);
 		List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll(boardName);
 		model.addAttribute("menuList", menuList);
+		
+		logger.debug("{} 게시글 작성 페이지", boardName);
 
 		return "board/write";
 	}
@@ -259,33 +260,138 @@ public class HomepageController {
 				storageBoardDao.requestInsert(request,fileName,filePath,fileType);
 			}
 			
-	        try(
-	                FileOutputStream fos = new FileOutputStream(filePath);
-	                InputStream is = file.getInputStream();
-	        ){
-	        	    int readCount = 0;
-	        	    byte[] buffer = new byte[1024];
-	            while((readCount = is.read(buffer)) != -1){
-	                fos.write(buffer,0,readCount);
-	            }
-	        }catch(Exception ex){
-	            throw new RuntimeException("file Save Error");
-	        }
+			upload(file,filePath);
 	        
 		}else{
 			if (boardName.equals("bulletinBoard")) {
 				BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
 				bulletinBoardDao.requestInsert(request);
-			} else if (boardName.equals("storageBoard")) {
+			} else {
 				StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
 				storageBoardDao.requestInsert(request);
-			} else {
-
-			}
+			} 
 		}		
 		return "redirect:"+boardName;
 	}
 	
+	//게시글 수정 페이지
+	@GetMapping(path = "/update")
+	public String postUpdatePage(@RequestParam("boardName") String boardName, 
+			@RequestParam("contentNo") int contentNo, Model model) {
+
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		BoardMenuDao boardMenuDao = ac.getBean(BoardMenuDao.class);
+		
+		List<BoardMenu> menuList = boardMenuDao.boardMenuSelectAll(boardName);
+		model.addAttribute("menuList", menuList);
+		
+		model.addAttribute("boardName",boardName);
+		
+		if (boardName.equals("bulletinBoard")) {
+			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+			Bulletin bulletinContent = bulletinBoardDao.selectByNo(contentNo);
+			model.addAttribute("bulletinContent", bulletinContent);
+		} else {
+			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+			Storage storageContent = storageBoardDao.selectByNo(contentNo);
+			model.addAttribute("storageContent",storageContent);
+		} 
+		
+		return "board/postUpdate";
+	}
+	
+	//게시글 수정
+	@PostMapping(path="/update")
+	public String postUpdate(@RequestParam("boardName") String boardName, 
+			@RequestParam("menuName") String menu,
+			@RequestParam("contentNo") int contentNo, @RequestParam("title") String title,
+			@RequestParam("content") String content, @RequestParam(required= false, name="file") MultipartFile file){
+		
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		if(boardName.equals("bulletinBoard")){
+			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+			Bulletin bulletin = bulletinBoardDao.selectByNo(contentNo);
+			
+			bulletin.setTitle(title);
+			bulletin.setContent(content);
+			bulletin.setMenu(menu);
+			
+			if(file.getSize() == 0){
+				bulletinBoardDao.update(bulletin);
+			}else{
+				String fileName = file.getOriginalFilename();
+				String filePath = "D:/tmp/bulletin/" + file.getOriginalFilename();
+				String fileType = file.getContentType();
+				
+				bulletin.setFileName(fileName);
+				bulletin.setFilePath(filePath);
+				bulletin.setFileType(fileType);
+				
+				upload(file, filePath);
+				bulletinBoardDao.updateWithFile(bulletin);
+			}
+		}else{
+			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+			Storage storage = storageBoardDao.selectByNo(contentNo);
+			
+			if(file.getSize() == 0){
+				storage.setTitle(title);
+				storage.setContent(content);
+				storage.setMenu(menu);
+				storageBoardDao.update(storage);
+			}else{
+				String fileName = file.getOriginalFilename();
+				String filePath = "D:/tmp/storage/" + file.getOriginalFilename();
+				String fileType = file.getContentType();
+				
+				storage.setFileName(fileName);
+				storage.setFilePath(filePath);
+				storage.setFileType(fileType);
+				
+				upload(file, filePath);
+				storageBoardDao.updateWithFile(storage);
+			}
+		}
+		
+		return "redirect:"+boardName;
+	}
+	
+	//게시글 삭제
+	@GetMapping(path="/delete")
+	public String delete(@RequestParam("boardName") String boardName, 
+			@RequestParam("contentNo") int contentNo){
+		
+		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+		
+		if (boardName.equals("bulletinBoard")) {
+			BulletinBoardDao bulletinBoardDao = ac.getBean(BulletinBoardDao.class);
+			bulletinBoardDao.deleteByNo(contentNo);
+		} else {
+			StorageBoardDao storageBoardDao = ac.getBean(StorageBoardDao.class);
+			storageBoardDao.deleteByNo(contentNo);
+		} 
+		
+		return "redirect:"+boardName;
+	}
+	
+	//파일 저장
+	public void upload(MultipartFile file, String filePath){
+		try(
+                FileOutputStream fos = new FileOutputStream(filePath);
+                InputStream is = file.getInputStream();
+        ){
+        	    int readCount = 0;
+        	    byte[] buffer = new byte[1024];
+            while((readCount = is.read(buffer)) != -1){
+                fos.write(buffer,0,readCount);
+            }
+        }catch(Exception ex){
+            throw new RuntimeException("file Save Error");
+        }
+	}
+	
+	//파일 다운로드
 	@GetMapping("/download")
 	public void download(@RequestParam("boardName") String boardName, @RequestParam("no") int no, HttpServletResponse response) {
 		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);

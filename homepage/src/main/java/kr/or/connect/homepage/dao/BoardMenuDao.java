@@ -8,7 +8,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -18,7 +17,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
 import kr.or.connect.homepage.dto.BoardMenu;
-import kr.or.connect.homepage.dto.Bulletin;
 
 @Repository
 public class BoardMenuDao {
@@ -45,7 +43,7 @@ public class BoardMenuDao {
 		SqlParameterSource params = new BeanPropertySqlParameterSource(boardMenu);
 		return insertAction.execute(params);
 	}
-	
+		
 	public int update(BoardMenu boardMenu) {
 		SqlParameterSource params = new BeanPropertySqlParameterSource(boardMenu);
 		return jdbc.update(MENU_UPDATE, params);

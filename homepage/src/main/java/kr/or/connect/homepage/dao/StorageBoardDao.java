@@ -82,7 +82,12 @@ public class StorageBoardDao {
 	
 	public int update(Storage storage) {
 		SqlParameterSource params = new BeanPropertySqlParameterSource(storage);
-		return jdbc.update(BULLETIN_UPDATE, params);
+		return jdbc.update(STORAGE_UPDATE, params);
+	}
+	
+	public int updateWithFile(Storage storage) {
+		SqlParameterSource params = new BeanPropertySqlParameterSource(storage);
+		return jdbc.update(STORAGE_UPDATE_WITH_FILE, params);
 	}
 	
 	public int deleteByNo(Integer no) {

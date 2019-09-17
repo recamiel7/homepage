@@ -90,6 +90,11 @@ public class BulletinBoardDao {
 		return jdbc.update(BULLETIN_UPDATE, params);
 	}
 	
+	public int updateWithFile(Bulletin bulletin) {
+		SqlParameterSource params = new BeanPropertySqlParameterSource(bulletin);
+		return jdbc.update(BULLETIN_UPDATE_WITH_FILE, params);
+	}
+	
 	public int deleteByNo(Integer no) {
 		Map<String, ?> params = Collections.singletonMap("no", no);
 		return jdbc.update(BULLETIN_DELETE_BY_NO, params);
