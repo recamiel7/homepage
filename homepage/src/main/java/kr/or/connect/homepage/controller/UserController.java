@@ -1,9 +1,5 @@
 package kr.or.connect.homepage.controller;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
@@ -11,26 +7,24 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import kr.or.connect.homepage.config.ApplicationConfig;
-import kr.or.connect.homepage.dao.UserDao;
 import kr.or.connect.homepage.dto.User;
+import kr.or.connect.homepage.service.UserService;
 
 @Controller
 public class UserController {
 	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	
+	@Autowired
+	UserService userService;
 	
 	// 회원가입 뷰
 	@GetMapping(path = "/signUp")
@@ -43,16 +37,12 @@ public class UserController {
 	public String regist(@RequestParam(name = "id", required = true) String id,
 			@RequestParam(name = "password", required = true) String password, @RequestParam("image") MultipartFile image,
 			ModelMap modelMap) {
-
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-
-		UserDao userDao = ac.getBean(UserDao.class);
 		
-		User users = new User();
+		User user = new User();
 		String imageName, imagePath, imageType;
 		
-		users.setUserId(id);
-		users.setPassword(password);
+		user.setUserId(id);
+		user.setPassword(password);
 		
 		if(image.getSize() != 0){
 			imageName = id;
@@ -67,27 +57,17 @@ public class UserController {
 		logger.debug("imageName = {}, imageType = {}",imageName, imageType);
 		logger.debug("imagePath = {}", imagePath);
 		
-		try(
-                FileOutputStream fos = new FileOutputStream(imagePath);
-                InputStream is = image.getInputStream();
-        ){
-        	    int readCount = 0;
-        	    byte[] buffer = new byte[1024];
-            while((readCount = is.read(buffer)) != -1){
-                fos.write(buffer,0,readCount);
-            }
-        }catch(Exception ex){
-            throw new RuntimeException("file Save Error");
-        }
+		userService.imageUpload(image, imagePath);
+		
 		logger.debug("유저 프로필 이미지 저장 완료");
 		logger.debug("userId = {}, imageName = {}",id, imageName);
 		logger.debug("imagePath = {}", imagePath);
 		
-		users.setFileName(imageName);
-		users.setFilePath(imagePath);
-		users.setFileType(imageType);
+		user.setFileName(imageName);
+		user.setFilePath(imagePath);
+		user.setFileType(imageType);
 		
-		userDao.insert(users);
+		userService.insertUser(user);
 		logger.debug("{} 유저의 아이디 생성 완료",id);
 		
 		return "user/signUpResult";
@@ -99,14 +79,10 @@ public class UserController {
 	}
 
 	// 중복 아이디 체크
-	@RequestMapping(value = "checkId", method = RequestMethod.POST)
+	@GetMapping(path ="/checkId")
 	public void checkId(@RequestParam("id") String id, HttpSession session, PrintWriter out) {
 
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-
-		UserDao userDao = ac.getBean(UserDao.class);
-
-		User resultUser = userDao.selectById(id);
+		User resultUser = userService.selectById(id);
 
 		if (resultUser == null) {
 			out.print("y");
@@ -131,12 +107,8 @@ public class UserController {
 	public String login(@RequestParam(name = "id", required = true) String id,
 			@RequestParam(name = "password", required = true) String password, RedirectAttributes redirectAttr,
 			HttpSession session) {
-
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-
-		UserDao userDao = ac.getBean(UserDao.class);
-
-		User user = userDao.selectById(id);
+		
+		User user = userService.selectById(id);
 
 		if (user.getUserId().equals(id) && user.getPassword().equals(password)) {
 			logger.debug("{} 유저 로그인 성공",id);
@@ -163,33 +135,16 @@ public class UserController {
 	
 	@GetMapping("/getImage")
 	public void getImage(@RequestParam("id") String id, HttpServletResponse response) {
-		ApplicationContext ac = new AnnotationConfigApplicationContext(ApplicationConfig.class);
 		
-		String fileName,filePath,contentType;
+		String imageName,imagePath,imageType;
+
+		User user = userService.selectById(id);
 		
-		UserDao userDao = ac.getBean(UserDao.class);
-		User user = userDao.selectById(id);
+		imageName = user.getFileName();
+		imagePath = user.getFilePath();
+		imageType = user.getFileType();
 		
-		fileName = user.getFileName();
-		filePath = user.getFilePath();
-		contentType = user.getFileType();
-		
-		response.setHeader("Content-Disposition", "inline; filename=\"" + fileName + "\";");
-		response.setHeader("Content-Transfer-Encoding", "binary");
-		response.setHeader("Content-Type", contentType);
-		
-		try(
-                FileInputStream fis = new FileInputStream(filePath);
-                OutputStream out = response.getOutputStream();
-        ){
-        	    int readCount = 0;
-        	    byte[] buffer = new byte[1024];
-            while((readCount = fis.read(buffer)) != -1){
-            		out.write(buffer,0,readCount);
-            }
-        }catch(Exception ex){
-            throw new RuntimeException("image file load Error");
-        }
+		userService.getImage(imageName, imagePath, imageType, response);
 		
 	}
 }
