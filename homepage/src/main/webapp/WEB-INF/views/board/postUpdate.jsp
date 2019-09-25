@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>게시글 수정</title>
+<link href="assets/css/sub.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" > </script>
 <script type="text/javascript">
 	function bulletinPost(){
@@ -29,6 +30,7 @@
 </script>
 </head>
 <body>
+	<div id="updateBody">
 	<c:if test="${bulletinContent != null }">
 		<form action="update" method="post" enctype="multipart/form-data" id="bulletinPost" >
 			<input type="hidden" name="boardName" value="${boardName }">
@@ -40,7 +42,7 @@
 					<td>게시판 선택</td>
 					<td>
 						<select name="menuName" id="menuNameB">
-							<option value="${bulletinContent.menu }" >${bulletinContent.menu }</option>
+							<option value="${bulletinContent.menuName }" >${bulletinContent.menuName }</option>
 							<c:forEach  var="menu" items="${menuList }">
 								<option value="${menu.menuName }">${menu.menuName }</option>
 							</c:forEach>
@@ -80,7 +82,7 @@
 					<td>게시판 선택</td>
 					<td>
 						<select name="menuName" id="menuNameS">
-							<option value="${storageContent.menu }" >${storageContent.menu }</option>
+							<option value="${storageContent.menuName }" >${storageContent.menuName }</option>
 							<c:forEach  var="menu" items="${menuList }">
 								<option value="${menu.menuName }">${menu.menuName }</option>
 							</c:forEach>
@@ -105,5 +107,6 @@
 	</c:if>
 	
 	<input type="button" value="작성 취소" onclick="javascript:location.href='${boardName}'">
+	</div>
 </body>
 </html>

@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>로그인 페이지</title>
+<link href="assets/css/user.css" rel="stylesheet" />
 <script>
 	function login(){		
 		if(document.loginForm.id.value=="") alert("아이디를 입력하세요");
@@ -16,15 +17,15 @@
 </script>
 </head>
 <body>
-	${errorMessage}<br><br>
-
-	<form name="loginForm" method="post" action="login">
-		아이디 : <input type="text" id="id" name="id">
-		패스워드 : <input type="password" name="password" ><br>
+	<form id="loginForm" name="loginForm" method="post" action="login">
+		<label>아이디</label> <input type="text" id="id" name="id"><br>
+		<label>패스워드</label> <input type="password" name="password" ><br><br>
 			
 		<input type="hidden" name="save" value="n">
 		<input type="button" value="로그인" onclick="login()">
 		<input type="reset" value="리셋">
 	</form>
+	${errorMessage}<br>
+		
 </body>					
 </html>

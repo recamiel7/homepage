@@ -11,7 +11,7 @@
 						<!-- 게시글 본문 -->
 						<input type="hidden" id="no" value="${boardContentS.no }">
 						<div>
-							<b>${boardContentS.title }</b> | <span>${boardContentS.menu }</span>
+							<b>${boardContentS.title }</b> | <span>${boardContentS.menuName }</span>
 							<span>${boardContentS.regdate }</span>
 						</div>
 						<hr>

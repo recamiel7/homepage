@@ -4,7 +4,7 @@ import java.util.Date;
 
 public class Bulletin {
 	private int no;
-	private String userId, menu, title, content, fileName, filePath, fileType;
+	private String userId, menuName, title, content, fileName, filePath, fileType;
 	private Date regdate;
 
 	public int getNo() {
@@ -23,12 +23,12 @@ public class Bulletin {
 		this.userId = userId;
 	}
 
-	public String getMenu() {
-		return menu;
+	public String getMenuName() {
+		return menuName;
 	}
 
-	public void setMenu(String menu) {
-		this.menu = menu;
+	public void setMenuName(String menuName) {
+		this.menuName = menuName;
 	}
 
 	public String getTitle() {

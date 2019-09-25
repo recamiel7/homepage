@@ -7,7 +7,7 @@
 					<c:if test="${boardContentB != null }">
 						<input type="hidden" id="no" value="${boardContentB.no }">
 						<div>
-							<b>${boardContentB.title }</b> | <span>${boardContentB.menu }</span>
+							<b>${boardContentB.title }</b> | <span>${boardContentB.menuName }</span>
 							<span>${boardContentB.regdate }</span>
 						</div>
 						<hr>

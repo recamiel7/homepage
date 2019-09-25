@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>게시글 작성</title>
+<link href="assets/css/sub.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" > </script>
 <script type="text/javascript">
 	function bulletinPost(){
@@ -37,7 +38,7 @@
 		String boardName = request.getParameter("boardName");
 	%>
 
-	
+	<div id="writeBody">
 	<c:if test='<%=boardName.equals("bulletinBoard")%>'>
 		<form action="write" method="post" enctype="multipart/form-data" id="bulletinPost" >
 			<input type="hidden" name="boardName" value="<%=boardName %>">
@@ -109,5 +110,7 @@
 	</c:if>
 	
 	<input type="button" value="작성 취소" onclick="javascript:location.href='<%=boardName%>'">
+	
+	</div>
 </body>
 </html>

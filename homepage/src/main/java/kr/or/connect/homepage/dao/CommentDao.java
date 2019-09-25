@@ -35,8 +35,8 @@ public class CommentDao {
 		return jdbc.query(COMMENT_SELECT_ALL, Collections.emptyMap(), rowMapper);
 	}
 	
-	public List<Comment> selectByContentNo(String boardName, String contentNo){
-		Map<String, String> params = new HashMap<String, String>();
+	public List<Comment> selectByContentNo(String boardName, int contentNo){
+		Map<String, Object> params = new HashMap<>();
 		params.put("boardName", boardName);
 		params.put("contentNo", contentNo);
 		return jdbc.query(COMMENT_SELECT_BY_CONTENT_NO, params, rowMapper);

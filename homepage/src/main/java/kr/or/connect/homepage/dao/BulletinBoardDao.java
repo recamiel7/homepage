@@ -4,6 +4,7 @@ import static kr.or.connect.homepage.dao.BoardDaoSqls.*;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,26 +34,41 @@ public class BulletinBoardDao {
                 .withTableName("bulletin");
 	}
 	
-	public List<Bulletin> selectAll(){
+	/*public List<Bulletin> selectAll(){
 		return jdbc.query(BULLETIN_SELECT_ALL, Collections.emptyMap(), bulletinRowMapper);
 	}
 	
-
-	public List<Bulletin> boardMenuSelectByMenuName(String menuName) {
+	public List<Bulletin> selectAllByMenuName(String menuName) {
 		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
 		return jdbc.query(BULLETIN_SELECT_BY_MENU_NAME, params, bulletinRowMapper);
+	}*/
+	
+	public List<Bulletin> selectAll(Integer start, Integer limit){
+		Map<String, Integer> params = new HashMap<>();
+		params.put("start", start);
+		params.put("limit", limit);
+		return jdbc.query(BULLETIN_SELECT_ALL_PAGING, params, bulletinRowMapper);
+	}	
+	
+	public List<Bulletin> selectAllByMenuName(String menuName, Integer start, Integer limit) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("menuName",menuName);
+		params.put("start",start);
+		params.put("limit",limit);
+		
+		return jdbc.query(BULLETIN_SELECT_BY_MENU_NAME_PAGING, params, bulletinRowMapper);
 	}
 	
 	public void requestInsert(HttpServletRequest request){
 		Bulletin bulletin = new Bulletin();
 		String userId =  request.getParameter("userId");
-		String menu =  request.getParameter("menuName");
+		String menuName =  request.getParameter("menuName");
 		String title =  request.getParameter("title");
 		String content = request.getParameter("content");
 		Date date = new Date();
 		
 		bulletin.setUserId(userId);
-		bulletin.setMenu(menu);
+		bulletin.setMenuName(menuName);
 		bulletin.setTitle(title);
 		bulletin.setContent(content);
 		bulletin.setRegdate(date);
@@ -63,13 +79,13 @@ public class BulletinBoardDao {
 	public void requestInsert(HttpServletRequest request, String fileName, String filePath, String fileType) {
 		Bulletin bulletin = new Bulletin();
 		String userId =  request.getParameter("userId");
-		String menu =  request.getParameter("menuName");
+		String menuName =  request.getParameter("menuName");
 		String title =  request.getParameter("title");
 		String content = request.getParameter("content");
 		Date date = new Date();
 		
 		bulletin.setUserId(userId);
-		bulletin.setMenu(menu);
+		bulletin.setMenuName(menuName);
 		bulletin.setTitle(title);
 		bulletin.setContent(content);
 		bulletin.setRegdate(date);
@@ -107,5 +123,14 @@ public class BulletinBoardDao {
 		}catch(EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+	
+	public int selectCount(){
+		return jdbc.queryForObject(BULLETIN_SELECT_COUNT, Collections.emptyMap(), Integer.class);
+	}
+	
+	public int selectCount(String menuName){
+		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
+		return jdbc.queryForObject(BULLETIN_SELECT_COUNT_BY_MENU_NAME , params, Integer.class);
 	}
 }

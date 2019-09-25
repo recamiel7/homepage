@@ -1,5 +1,6 @@
 package kr.or.connect.homepage.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,28 +69,48 @@ public class HomepageController {
 	//소스 관리 게시판 페이지
 	@GetMapping(path = "/storageBoard")
 	public String storage(@RequestParam(required = false, name = "menuName") String menuName,
-			@RequestParam(required = false, name = "contentNo") String no,
-			@RequestParam(required = false, name = "type") String type, Model model, HttpSession session) {
+			@RequestParam(required = false, name = "contentNo" , defaultValue = "0") int no,
+			@RequestParam(required = false, name = "type") String type, 
+			@RequestParam(required = false, name = "start", defaultValue = "0") int start, 
+			Model model, HttpSession session) {
 
 		String boardName = "storageBoard";
+		int count;
 
 		try {
 			// 게시글 리스트
 			List<BoardMenu> menuList = homepageService.getBoardMenuList(boardName);
 			model.addAttribute("menuList", menuList);
 			if (menuName != null && menuName.length() != 0) {
-				List<Storage> changeBoardList = homepageService.getStorageContentListByMenuName(menuName);
+				List<Storage> changeBoardList = homepageService.getStorageContentListByMenuName(menuName,start);
+				
+				count = homepageService.getStorageCount(menuName);
+								
 				model.addAttribute("boardList", changeBoardList);
 				model.addAttribute("menuName", menuName);
 			} else {
-				List<Storage> boardLsit = homepageService.getStorageContentList();
+				List<Storage> boardLsit = homepageService.getStorageContentList(start);
+				
+				count = homepageService.getStorageCount();
+				
 				model.addAttribute("boardList", boardLsit);
 			}
+			
+			int pageCount = count/HomepageService.LIMIT;
+			if(count % HomepageService.LIMIT>0)
+				pageCount++;
+			
+			List<Integer> pageStartList = new ArrayList<>();
+			for(int i=0; i<pageCount; i++){
+				pageStartList.add(i*HomepageService.LIMIT);
+			}
+			
+			model.addAttribute("pageStartList", pageStartList);
 
 			// 게시글 내용 표시
 			if (type != null) {
 				model.addAttribute("type", "content");
-				Storage storage = homepageService.getStorageContentByNo((Integer.valueOf(no)));
+				Storage storage = homepageService.getStorageContentByNo(no);
 				List<Comment> commentList = homepageService.getCommentList(boardName, no);
 
 				logger.debug("{} 게시글 읽어오기 성공", boardName);
@@ -111,28 +132,48 @@ public class HomepageController {
 	//자유 게시판 페이지
 	@GetMapping(path = "/bulletinBoard")
 	public String bulletin(@RequestParam(required = false, name = "menuName") String menuName,
-			@RequestParam(required = false, name = "contentNo") String no,
-			@RequestParam(required = false, name = "type") String type, Model model, HttpSession session) {
+			@RequestParam(required = false, name = "contentNo" , defaultValue = "0") int no,
+			@RequestParam(required = false, name = "type") String type,
+			@RequestParam(required = false, name = "start", defaultValue = "0") int start, 
+			 Model model, HttpSession session) {
 
 		String boardName = "bulletinBoard";
+		int count;
 	
 		try {
 			// 게시글 리스트
 			List<BoardMenu> menuList = homepageService.getBoardMenuList(boardName);
 			model.addAttribute("menuList", menuList);
 			if (menuName != null && menuName.length() != 0) {
-				List<Bulletin> changeBoardList = homepageService.getBulletinContentListByMenuName(menuName);
+				List<Bulletin> changeBoardList = homepageService.getBulletinContentListByMenuName(menuName,start);
+				
+				count = homepageService.getBulletinCount(menuName);
+
 				model.addAttribute("boardList", changeBoardList);
 				model.addAttribute("menuName", menuName);
 			} else {
-				List<Bulletin> boardList = homepageService.getBulletinContentList();
+				List<Bulletin> boardList = homepageService.getBulletinContentList(start);
+				
+				count = homepageService.getBulletinCount();
+				
 				model.addAttribute("boardList", boardList);
 			}
+			
+			int pageCount = count/HomepageService.LIMIT;
+			if(count % HomepageService.LIMIT>0)
+				pageCount++;
+			
+			List<Integer> pageStartList = new ArrayList<>();
+			for(int i=0; i<pageCount; i++){
+				pageStartList.add(i*HomepageService.LIMIT);
+			}
+			
+			model.addAttribute("pageStartList", pageStartList);
 
 			// 게시글 내용 표시
 			if (type != null) {
 				model.addAttribute("type", "content");
-				Bulletin bulletin = homepageService.getBulletinContentByNo((Integer.valueOf(no)));
+				Bulletin bulletin = homepageService.getBulletinContentByNo(no);
 				List<Comment> commentList = homepageService.getCommentList(boardName, no);
 
 				logger.debug("{} 게시글 읽어오기 성공", boardName);
@@ -237,7 +278,7 @@ public class HomepageController {
 
 	// 게시글 수정
 	@PostMapping(path = "/update")
-	public String postUpdate(@RequestParam("boardName") String boardName, @RequestParam("menuName") String menu,
+	public String postUpdate(@RequestParam("boardName") String boardName, @RequestParam("menuName") String menuName,
 			@RequestParam("contentNo") int contentNo, @RequestParam("title") String title,
 			@RequestParam("content") String content,
 			@RequestParam(required = false, name = "file") MultipartFile file) {
@@ -247,7 +288,7 @@ public class HomepageController {
 
 			bulletin.setTitle(title);
 			bulletin.setContent(content);
-			bulletin.setMenu(menu);
+			bulletin.setMenuName(menuName);
 
 			if (file.getSize() == 0) {
 				homepageService.updateBulletin(bulletin);
@@ -266,11 +307,11 @@ public class HomepageController {
 		} else {
 			Storage storage = homepageService.getStorageContentByNo(contentNo);
 
-			if (file.getSize() == 0) {
-				storage.setTitle(title);
-				storage.setContent(content);
-				storage.setMenu(menu);
-				
+			storage.setTitle(title);
+			storage.setContent(content);
+			storage.setMenuName(menuName);
+			
+			if (file.getSize() == 0) {				
 				homepageService.updateStorage(storage);
 			} else {
 				String fileName = file.getOriginalFilename();

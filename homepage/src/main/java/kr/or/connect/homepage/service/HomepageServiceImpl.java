@@ -73,20 +73,32 @@ public class HomepageServiceImpl implements HomepageService {
 	public Bulletin getBulletinContentByNo(int no){
 		return bulletinBoardDao.selectByNo(no);
 	}	
-	@Override
+	/*@Override
 	public List<Bulletin> getBulletinContentList() {
 		return bulletinBoardDao.selectAll();
 	}
 	@Override
 	public List<Bulletin> getBulletinContentListByMenuName(String menuName) {
-		return bulletinBoardDao.boardMenuSelectByMenuName(menuName);
+		return bulletinBoardDao.selectAllByMenuName(menuName);
+	}*/
+	@Override
+	public List<Bulletin> getBulletinContentList(Integer start) {
+		return bulletinBoardDao.selectAll(start, HomepageService.LIMIT);
+	}
+	@Override
+	public List<Bulletin> getBulletinContentListByMenuName(String menuName, Integer start) {
+		return bulletinBoardDao.selectAllByMenuName(menuName, start, HomepageService.LIMIT);
 	}
 	@Override
 	public int getBulletinCount() {
 		return bulletinBoardDao.selectCount();
 	}
+	@Override
+	public int getBulletinCount(String menuName) {
+		return bulletinBoardDao.selectCount(menuName);
+	}
 
-/*---------------- 소스관리 게시판 ---------------------------*/
+	/*---------------- 소스관리 게시판 ---------------------------*/
 	@Autowired
 	StorageBoardDao storageBoardDao;
 	
@@ -114,20 +126,33 @@ public class HomepageServiceImpl implements HomepageService {
 	}
 
 	@Override
-	public Storage getStorageContentByNo(int no) {
+	public Storage getStorageContentByNo(Integer no) {
 		return storageBoardDao.selectByNo(no);
 	}		
-	@Override
+	/*@Override
 	public List<Storage> getStorageContentList() {
 		return storageBoardDao.selectAll();
-	}
+	}	
 	@Override
 	public List<Storage> getStorageContentListByMenuName(String menuName) {
-		return storageBoardDao.boardMenuSelectByMenuName(menuName);
+		return storageBoardDao.selectAllByMenuName(menuName);
+	}*/
+	@Override
+	public List<Storage> getStorageContentList(Integer start) {
+		return storageBoardDao.selectAll(start, HomepageService.LIMIT);
 	}
+	@Override
+	public List<Storage> getStorageContentListByMenuName(String menuName, Integer start) {
+		return storageBoardDao.selectAllByMenuName(menuName, start, HomepageService.LIMIT);
+	}
+
 	@Override
 	public int getStorageCount(){
 		return storageBoardDao.selectCount();
+	}
+	@Override
+	public int getStorageCount(String menuName) {
+		return storageBoardDao.selectCount(menuName);
 	}
 
 /*---------------- 메뉴 관련 ---------------------------*/
@@ -154,7 +179,7 @@ public class HomepageServiceImpl implements HomepageService {
 	}
 
 	@Override
-	public List<Comment> getCommentList(String boardName, String no) {
+	public List<Comment> getCommentList(String boardName, Integer no) {
 		return commentDao.selectByContentNo(boardName, no);
 	}
 		

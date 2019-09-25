@@ -1,0 +1,54 @@
+@CHARSET "UTF-8";
+
+/*  base  */
+body{
+	background-color: #ffffff;
+}
+
+label{
+	display:block;
+	margin-top: 5px;
+	margin-bottom: 5px;
+}
+
+/*  login  */
+#loginForm{
+	background-color: #c0c0c0;
+	border:1px solid #000000;
+	border-radius: 10px;
+	width: 250px;
+	padding: 10px;
+	margin-right: auto;
+	margin-left: auto;
+	margin-top : 100px;
+}
+
+/*  signUp  */
+#registForm{
+	display: flex;
+	flex-direction: row;
+	
+	background-color: #c0c0c0;
+	border:1px solid #000000;
+	border-radius: 10px;
+	width: 350px;
+	
+	margin-right: auto;
+	margin-left: auto;
+	margin-top : 100px;
+}
+#registForm>form{
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+	padding-right: 0px;
+}
+
+#checkButton{
+	display: flex;
+	justify-content: center;
+	align-content : center;
+	
+	margin-top: 25px;
+	height: 25px;
+}

@@ -4,6 +4,7 @@ import static kr.or.connect.homepage.dao.BoardDaoSqls.*;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -33,23 +34,39 @@ public class StorageBoardDao {
                 .withTableName("storage");
 	}
 	
-	public List<Storage> selectAll(){
+	/*public List<Storage> selectAll(){
 		return jdbc.query(STORAGE_SELECT_ALL, Collections.emptyMap(), storageRowMapper);
 	}
-	
-	public List<Storage> boardMenuSelectByMenuName(String menuName) {
+		
+	public List<Storage> selectAllByMenuName(String menuName) {
 		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
 		return jdbc.query(STORAGE_SELECT_BY_MENU_NAME, params, storageRowMapper);
+	}*/
+		
+	public List<Storage> selectAll(Integer start, Integer limit){
+		Map<String, Integer> params = new HashMap<>();
+		params.put("start", start);
+		params.put("limit", limit);
+		return jdbc.query(STORAGE_SELECT_ALL_PAGING, params, storageRowMapper);
+	}
+
+	public List<Storage> selectAllByMenuName(String menuName, Integer start, Integer limit) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("menuName",menuName);
+		params.put("start",start);
+		params.put("limit",limit);
+		
+		return jdbc.query(STORAGE_SELECT_BY_MENU_NAME_PAGING, params, storageRowMapper);
 	}
 	
 	public void requestInsert(HttpServletRequest request){
 		Storage storage = new Storage();
-		String menu =  request.getParameter("menuName");
+		String menuName =  request.getParameter("menuName");
 		String title =  request.getParameter("title");
 		String content = request.getParameter("content");
 		Date date = new Date();
 				
-		storage.setMenu(menu);
+		storage.setMenuName(menuName);
 		storage.setTitle(title);
 		storage.setContent(content);
 		storage.setRegdate(date);
@@ -59,12 +76,12 @@ public class StorageBoardDao {
 	
 	public void requestInsert(HttpServletRequest request,String fileName, String filePath, String fileType){
 		Storage storage = new Storage();
-		String menu =  request.getParameter("menuName");
+		String menuName =  request.getParameter("menuName");
 		String title =  request.getParameter("title");
 		String content = request.getParameter("content");
 		Date date = new Date();
 		
-		storage.setMenu(menu);
+		storage.setMenuName(menuName);
 		storage.setTitle(title);
 		storage.setContent(content);
 		storage.setRegdate(date);
@@ -102,5 +119,14 @@ public class StorageBoardDao {
 		}catch(EmptyResultDataAccessException e) {
 			return null;
 		}
+	}
+	
+	public int selectCount(){
+		return jdbc.queryForObject(STORAGE_SELECT_COUNT, Collections.emptyMap(), Integer.class);
+	}
+	
+	public int selectCount(String menuName){
+		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
+		return jdbc.queryForObject(STORAGE_SELECT_COUNT_BY_MENU_NAME, params, Integer.class);
 	}
 }
