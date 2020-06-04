@@ -49,11 +49,11 @@
 					function(data, status) {
 						if (status == "success") {
 							alert("댓글 추가 성공");
+							document.location.reload();
 						} else {
 							alert("댓글 추가 실패");
 						}
 					}
-
 			);
 		}
 	}

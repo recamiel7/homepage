@@ -19,7 +19,8 @@
 <body>
 	<form id="loginForm" name="loginForm" method="post" action="login">
 		<label>아이디</label> <input type="text" id="id" name="id"><br>
-		<label>패스워드</label> <input type="password" name="password" ><br><br>
+		<label>패스워드</label> <input type="password" name="password" 
+									onkeypress="if(event.keyCode == 13){ login(); return; }"><br><br>
 			
 		<input type="hidden" name="save" value="n">
 		<input type="button" value="로그인" onclick="login()">

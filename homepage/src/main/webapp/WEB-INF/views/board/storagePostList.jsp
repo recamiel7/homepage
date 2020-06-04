@@ -5,6 +5,10 @@
 <!-- 게시글 리스트 -->
 <div id="postList">
 	<table id="list_table">
+		<c:if test="${menuName != null }">
+			<h2>${menuName }</h2>
+			<hr>
+		</c:if>
 		<thead>
 			<tr>
 				<th width="10%">No</th>

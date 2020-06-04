@@ -26,8 +26,10 @@
 						<input type="button" value="목록으로"
 							onclick="javascript:location.href='bulletinBoard?menuName=${menuName}'">
 						<c:if test="${loginUser.userId.equals(boardContentB.userId) }">
-							<input type="button" value="수정" onclick="javascript:location.href='update?boardName=bulletinBoard&contentNo=${boardContentB.no }'">
-							<input type="button" value="삭제" onclick="javascript:location.href='delete?boardName=bulletinBoard&contentNo=${boardContentB.no }'">
+							<input type="button" value="수정" 
+									onclick="javascript:location.href='update?boardName=bulletinBoard&contentNo=${boardContentB.no }'">
+							<input type="button" value="삭제" 
+									onclick="javascript:location.href='delete?boardName=bulletinBoard&contentNo=${boardContentB.no }'">
 						</c:if>
 						<hr>
 						

@@ -82,7 +82,8 @@ public class HomepageController {
 			List<BoardMenu> menuList = homepageService.getBoardMenuList(boardName);
 			model.addAttribute("menuList", menuList);
 			if (menuName != null && menuName.length() != 0) {
-				List<Storage> changeBoardList = homepageService.getStorageContentListByMenuName(menuName,start);
+				List<Storage> changeBoardList = 
+						homepageService.getStorageContentListByMenuName(menuName,start);
 				
 				count = homepageService.getStorageCount(menuName);
 								
@@ -116,8 +117,8 @@ public class HomepageController {
 				logger.debug("{} 게시글 읽어오기 성공", boardName);
 				logger.debug("{}, 댓글 갯수 {}", boardName, commentList.size());
 
-				session.setAttribute("boardContentS", storage);
-				session.setAttribute("commentListS", commentList);
+				model.addAttribute("boardContentS", storage);
+				model.addAttribute("commentListS", commentList);
 			}
 
 		} catch (Exception e) {
@@ -370,7 +371,7 @@ public class HomepageController {
 
 	// 댓글 등록
 	@PostMapping(path = "/commentInsert")
-	public void commentInsert(@RequestParam("boardName") String boardName, @RequestParam("contentNo") int contentNo,
+	public String commentInsert(@RequestParam("boardName") String boardName, @RequestParam("contentNo") int contentNo,
 			@RequestParam("userId") String userId, @RequestParam("comment") String comment) {
 
 		Comment boardComment = new Comment();
@@ -381,5 +382,7 @@ public class HomepageController {
 		logger.debug("{}, {}, {} 댓글 등록 완료", userId, boardName, contentNo);
 		
 		homepageService.insertComment(boardComment);
+		
+		return "redirect:" + boardName ;
 	}
 }

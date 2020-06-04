@@ -32,7 +32,7 @@
     });
 
     calendar.render();
-    calendar.setOption('locale', "ko");
+    calendar.setOption('locale', "ko"); //언어 한국어로 설정
 
   });
 

@@ -4,7 +4,10 @@
 
 <!-- 게시글 리스트 -->
 <div id="postList">
-
+	<c:if test="${menuName != null }">
+		<h2>${menuName }</h2>
+		<hr>
+	</c:if>
 	<table id="list_table">
 		<thead>
 			<tr>
@@ -18,8 +21,7 @@
 			<tbody>
 				<tr>
 					<td align="center">${board.no }</td>
-					<td align="center"><a
-						onclick="javascript:location.href='bulletinBoard?type=content&contentNo=${board.no}&menuName=${menuName }'">${board.title }</a></td>
+					<td align="center"><a onclick="javascript:location.href='bulletinBoard?type=content&contentNo=${board.no}&menuName=${menuName }'">${board.title }</a></td>
 					<td align="center">${board.userId }</td>
 					<td align="center">${board.regdate }</td>
 				</tr>

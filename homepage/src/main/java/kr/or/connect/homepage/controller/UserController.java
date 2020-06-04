@@ -110,28 +110,33 @@ public class UserController {
 		
 		User user = userService.selectById(id);
 
-		if (user.getUserId().equals(id) && user.getPassword().equals(password)) {
+		if (user == null){
+			logger.debug("{} 유저 로그인 실패(null)",id);
+			redirectAttr.addFlashAttribute("errorMessage", "아이디가 존재하지 않습니다.");
+			return "redirect:/loginForm";
+		}else if (user.getUserId().equals(id) && user.getPassword().equals(password)) {
 			logger.debug("{} 유저 로그인 성공",id);
 			session.setAttribute("loginUser", user);
 			if (user.getUserId().equals("Admin"))
 				session.setAttribute("checkAdmin", true);
 			return "redirect:/home";
 		} else {
-			logger.debug("{} 유저 로그인 실패",id);
-			redirectAttr.addFlashAttribute("errorMessage", "아이디와 비밀번호를 확인하세요.");
-			return "redirect:/user/loginForm";
+			logger.debug("{} 유저 로그인 실패(password)",id);
+			redirectAttr.addFlashAttribute("errorMessage", "비밀번호를 확인하세요.");
+			return "redirect:/loginForm";
 		}
 	}
 
 	// 로그아웃
 	@GetMapping(path = "/logout")
 	public String logout(HttpSession session) {
-		session.removeAttribute("loginUser");
-		if ((boolean) session.getAttribute("checkAdmin") == true)
-			session.removeAttribute("checkAdmin");
+		if(session.getAttribute("loginUser") != null){
+			session.removeAttribute("loginUser");
+			if (session.getAttribute("checkAdmin") !=null && (boolean)session.getAttribute("checkAdmin") == true)
+				session.removeAttribute("checkAdmin");
+		}
 		return "redirect:/home";
 	}
-
 	
 	@GetMapping("/getImage")
 	public void getImage(@RequestParam("id") String id, HttpServletResponse response) {
