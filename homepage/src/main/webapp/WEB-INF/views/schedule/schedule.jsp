@@ -25,6 +25,11 @@
   			    
     var calendar = new FullCalendar.Calendar(calendarEl, {
       plugins: [ 'interaction', 'dayGrid' ],
+      header: {
+          left: 'prevYear,prev,next,nextYear today',
+          center: 'title',
+          right: 'dayGridMonth,dayGridWeek,dayGridDay'
+        },
       defaultDate: new Date(),
       editable: true,
       eventLimit: true, // allow "more" link when too many events

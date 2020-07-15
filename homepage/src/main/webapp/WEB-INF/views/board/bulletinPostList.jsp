@@ -32,6 +32,9 @@
 		<c:forEach items="${pageStartList}" var="pageIndex" varStatus="status">
 			<a href="bulletinBoard?start=${pageIndex}">${status.index +1 }</a>&nbsp; &nbsp;
 		</c:forEach>
+		<br>
+		<input type="text" placeholder="검색할 단어를 입력해주세요." id="searchText">
+		<input type="button" value="검색" onclick="searchText()">
 	</div>
 	<hr>
 	<c:if test="${sessionScope.loginUser !=null }">

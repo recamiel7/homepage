@@ -90,12 +90,20 @@ public class HomepageServiceImpl implements HomepageService {
 		return bulletinBoardDao.selectAllByMenuName(menuName, start, HomepageService.LIMIT);
 	}
 	@Override
+	public List<Bulletin> getBulletinContentListBySearchText(String searchText, Integer start) {
+		return bulletinBoardDao.selectAllBySearchText(searchText, start, HomepageService.LIMIT);
+	}
+	@Override
 	public int getBulletinCount() {
 		return bulletinBoardDao.selectCount();
 	}
 	@Override
 	public int getBulletinCount(String menuName) {
 		return bulletinBoardDao.selectCount(menuName);
+	}
+	@Override
+	public int getBulletinCountBySearchText(String searchText) {
+		return bulletinBoardDao.selectCountBySearchText(searchText);
 	}
 
 	/*---------------- 소스관리 게시판 ---------------------------*/
@@ -145,6 +153,11 @@ public class HomepageServiceImpl implements HomepageService {
 	public List<Storage> getStorageContentListByMenuName(String menuName, Integer start) {
 		return storageBoardDao.selectAllByMenuName(menuName, start, HomepageService.LIMIT);
 	}
+	
+	@Override
+	public List<Storage> getStorageContentListBySearchText(String searchText, Integer start) {
+		return storageBoardDao.selectAllBySearchText(searchText, start, HomepageService.LIMIT);
+	}
 
 	@Override
 	public int getStorageCount(){
@@ -153,6 +166,10 @@ public class HomepageServiceImpl implements HomepageService {
 	@Override
 	public int getStorageCount(String menuName) {
 		return storageBoardDao.selectCount(menuName);
+	}
+	@Override
+	public int getStorageCountBySearchText(String searchText) {
+		return storageBoardDao.selectCountBySearchText(searchText);
 	}
 
 /*---------------- 메뉴 관련 ---------------------------*/

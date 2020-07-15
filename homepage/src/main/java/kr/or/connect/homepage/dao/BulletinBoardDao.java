@@ -59,6 +59,15 @@ public class BulletinBoardDao {
 		return jdbc.query(BULLETIN_SELECT_BY_MENU_NAME_PAGING, params, bulletinRowMapper);
 	}
 	
+	public List<Bulletin> selectAllBySearchText(String searchText, Integer start, Integer limit) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("searchText","%"+searchText+"%");
+		params.put("start",start);
+		params.put("limit",limit);
+		
+		return jdbc.query(BULLETIN_SELECT_SEARCH_TEXT_PAGING, params, bulletinRowMapper);
+	}
+	
 	public void requestInsert(HttpServletRequest request){
 		Bulletin bulletin = new Bulletin();
 		String userId =  request.getParameter("userId");
@@ -132,5 +141,10 @@ public class BulletinBoardDao {
 	public int selectCount(String menuName){
 		Map<String, ?> params = Collections.singletonMap("menuName", menuName);
 		return jdbc.queryForObject(BULLETIN_SELECT_COUNT_BY_MENU_NAME , params, Integer.class);
+	}
+	
+	public int selectCountBySearchText(String searchText){
+		Map<String, ?> params = Collections.singletonMap("searchText", "%"+searchText+"%");
+		return jdbc.queryForObject(BULLETIN_SELECT_COUNT_BY_SEARCH_TEXT , params, Integer.class);
 	}
 }

@@ -26,6 +26,7 @@
 			function(data, status) {
 				if (status == "success") {
 					alert("메뉴 추가 성공");
+					document.location.reload();
 				} else {
 					alert("메뉴 추가 실패");
 				}
@@ -51,6 +52,7 @@
 					function(data, status) {
 						if (status == "success") {
 							alert("댓글 추가 성공");
+							document.location.reload();
 						} else {
 							alert("댓글 추가 실패");
 						}
@@ -72,6 +74,24 @@
 		form.setAttribute('action', $('#boardName').val());
 		document.body.appendChild(form);
 		form.submit();
+	}
+	
+	function searchText() {
+		if($("#searchText").val() == ""){
+			alert("검색어를 입력하세요");
+		}else{
+			var form = document.createElement('form');
+			var objs;
+			objs = document.createElement('input');
+			objs.setAttribute('type', 'text');
+			objs.setAttribute('name', 'searchText');
+			objs.setAttribute('value', $('#searchText').val());
+			form.appendChild(objs);
+			form.setAttribute('method', 'get');
+			form.setAttribute('action', $('#boardName').val());
+			document.body.appendChild(form);
+			form.submit();
+		}
 	}
 	
 </script>

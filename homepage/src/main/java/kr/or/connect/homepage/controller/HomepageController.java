@@ -72,6 +72,7 @@ public class HomepageController {
 			@RequestParam(required = false, name = "contentNo" , defaultValue = "0") int no,
 			@RequestParam(required = false, name = "type") String type, 
 			@RequestParam(required = false, name = "start", defaultValue = "0") int start, 
+			@RequestParam(required = false, name = "searchText") String searchText,
 			Model model, HttpSession session) {
 
 		String boardName = "storageBoard";
@@ -89,6 +90,16 @@ public class HomepageController {
 								
 				model.addAttribute("boardList", changeBoardList);
 				model.addAttribute("menuName", menuName);
+			} else if(searchText != null && searchText.length() != 0){
+				logger.debug("{} 검색어", searchText);
+				List<Storage> searchBoardList = homepageService.getStorageContentListBySearchText(searchText,start);
+				
+				logger.debug("{} 검색어", searchBoardList);
+				
+				count = homepageService.getStorageCountBySearchText(searchText);
+				
+				model.addAttribute("boardList", searchBoardList);
+				
 			} else {
 				List<Storage> boardLsit = homepageService.getStorageContentList(start);
 				
@@ -136,6 +147,7 @@ public class HomepageController {
 			@RequestParam(required = false, name = "contentNo" , defaultValue = "0") int no,
 			@RequestParam(required = false, name = "type") String type,
 			@RequestParam(required = false, name = "start", defaultValue = "0") int start, 
+			@RequestParam(required = false, name = "searchText") String searchText,
 			 Model model, HttpSession session) {
 
 		String boardName = "bulletinBoard";
@@ -145,13 +157,23 @@ public class HomepageController {
 			// 게시글 리스트
 			List<BoardMenu> menuList = homepageService.getBoardMenuList(boardName);
 			model.addAttribute("menuList", menuList);
+			
 			if (menuName != null && menuName.length() != 0) {
 				List<Bulletin> changeBoardList = homepageService.getBulletinContentListByMenuName(menuName,start);
-				
 				count = homepageService.getBulletinCount(menuName);
 
 				model.addAttribute("boardList", changeBoardList);
 				model.addAttribute("menuName", menuName);
+			} else if(searchText != null && searchText.length() != 0){
+				logger.debug("{} 검색어", searchText);
+				List<Bulletin> searchBoardList = homepageService.getBulletinContentListBySearchText(searchText,start);
+				
+				logger.debug("{} 검색어", searchBoardList);
+				
+				count = homepageService.getBulletinCountBySearchText(searchText);
+				
+				model.addAttribute("boardList", searchBoardList);
+				
 			} else {
 				List<Bulletin> boardList = homepageService.getBulletinContentList(start);
 				

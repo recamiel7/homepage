@@ -29,6 +29,7 @@ public interface HomepageService {
 	public List<Bulletin> getBulletinContentListByMenuName(String menuName);*/
 	public List<Bulletin> getBulletinContentList(Integer start);	
 	public List<Bulletin> getBulletinContentListByMenuName(String menuName,Integer start);
+	public List<Bulletin> getBulletinContentListBySearchText(String searchText,Integer start);
 	
 	public void updateBulletin(Bulletin bulletin);
 	public void updateBulletinWithFile(Bulletin bulletin);
@@ -37,6 +38,7 @@ public interface HomepageService {
 	
 	public int getBulletinCount();
 	public int getBulletinCount(String menuName);
+	public int getBulletinCountBySearchText(String searchText);
 	
 /*---------------- 소스관리 게시판 ---------------------------*/
 	public void insertStorage(HttpServletRequest request);
@@ -47,6 +49,7 @@ public interface HomepageService {
 	public List<Storage> getStorageContentListByMenuName(String menuName);*/
 	public List<Storage> getStorageContentList(Integer start);
 	public List<Storage> getStorageContentListByMenuName(String menuName,Integer start);
+	public List<Storage> getStorageContentListBySearchText(String searchText,Integer start);
 	
 	public void updateStorage(Storage storage);
 	public void updateStorageWithFile(Storage storage);
@@ -55,6 +58,7 @@ public interface HomepageService {
 	
 	public int getStorageCount();
 	public int getStorageCount(String menuName);
+	public int getStorageCountBySearchText(String searchText);
 	
 /*---------------- 메뉴 관련 ---------------------------*/
 	public void insertBoardMenu(BoardMenu boardMenu);
