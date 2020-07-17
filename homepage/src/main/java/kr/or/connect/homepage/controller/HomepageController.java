@@ -94,11 +94,10 @@ public class HomepageController {
 				logger.debug("{} 검색어", searchText);
 				List<Storage> searchBoardList = homepageService.getStorageContentListBySearchText(searchText,start);
 				
-				logger.debug("{} 검색어", searchBoardList);
-				
 				count = homepageService.getStorageCountBySearchText(searchText);
 				
 				model.addAttribute("boardList", searchBoardList);
+				model.addAttribute("searchText", searchText);
 				
 			} else {
 				List<Storage> boardLsit = homepageService.getStorageContentList(start);
@@ -168,11 +167,10 @@ public class HomepageController {
 				logger.debug("{} 검색어", searchText);
 				List<Bulletin> searchBoardList = homepageService.getBulletinContentListBySearchText(searchText,start);
 				
-				logger.debug("{} 검색어", searchBoardList);
-				
 				count = homepageService.getBulletinCountBySearchText(searchText);
 				
 				model.addAttribute("boardList", searchBoardList);
+				model.addAttribute("searchText", searchText);
 				
 			} else {
 				List<Bulletin> boardList = homepageService.getBulletinContentList(start);
